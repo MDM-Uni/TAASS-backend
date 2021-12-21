@@ -1,0 +1,43 @@
+> Queste sono solo delle proposte, giusto per allinearsi sullo stesso piano di lavoro. Qualsiasi cosa può essere cambiata se ne discutiamo tra di noi
+# Git Policy
+1. Non lavorare mai sul branch _main_ se si vuole modificare il codice o file ad esso collegato che potrebbero portare problemi all'esecuzione.
+2. Quando si vuole lavorare ad un task di Trello, creare un nuovo branch che un nome significativo della feature da implementare.
+3. Fare una `git rebase` sul branch _main_ solo quando il codice è stato testato. [Perchè non usare _git merge_?](#perchè-non-usare-git-merge) 
+4. Mi sembra scontato ma, dare nomi significativi ai commit.
+
+# Project configuration
+Creare i seguenti progetti separati:
+1. per il backend su Spring.
+2. per il frontend con Angular.
+3. per il frontend con Flutter.
+
+In fase di configurazione di progetto su GitHub c'è un'opzione apposita per scegliere un template di _.gitignore_. Scegliamo quello corretto così da avere meno problemi.
+
+## Versioni
+E' meglio mettersi d'accordo sulle versioni che utilizzeremo delle varie tecnologie, anche perchè io con mac M1 potrei avere ulteriori problemi.  
+
+### Spring Java
+> Versione 11  
+
+Molto collaudata e so che mi funziona su mac M1
+
+### Angular
+Angular o AngularJS? Versione?
+
+### Flutter  
+> Flutter: stable, 2.5.3  
+> Android SDK 31.0.0  
+> Dart SDK version: 2.14.4 (stable)  
+
+Per scoprire la versione installata sul proprio dispositivo runnare:  
+```
+flutter doctor
+dart --version
+```
+
+# Trello policy
+1. Aggiornare lo stato di avanzamento di un task tramite le etichette impostate (doing, testing, ...) ed eventualmente, se si è in ritardo con la consegna, aggiornare la data presunta di terminazione del task
+
+# Note
+## Perchè non usare git merge
+Perchè non mantiene su un'unica linea temporale i commit e se un branch viene eliminato dopo il 'git merge', vengono persi tutti i commit che hanno portato al completamento della feature (ovviamente rimane il commit di merge). E' una questione estetica e di analytics più che altro.
