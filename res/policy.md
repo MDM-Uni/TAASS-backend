@@ -22,7 +22,7 @@ E' meglio mettersi d'accordo sulle versioni che utilizzeremo delle varie tecnolo
 Molto collaudata e so che mi funziona su mac M1
 
 ### Angular
-Angular o AngularJS? Versione?
+> Angular CLI: 13.1.2
 
 ### Flutter  
 > Flutter: stable, 2.5.3  
