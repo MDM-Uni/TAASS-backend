@@ -1,10 +1,10 @@
-package com.example.taassbackend;
+package com.petlife.ospedalemicroservizio;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TaassBackendApplicationTests {
+class OspedaleMicroservizioApplicationTests {
 
    @Test
    void contextLoads() {
