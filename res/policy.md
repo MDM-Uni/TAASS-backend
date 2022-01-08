@@ -15,20 +15,25 @@ In fase di configurazione di progetto su GitHub c'è un'opzione apposita per sce
 
 ## Versioni
 E' meglio mettersi d'accordo sulle versioni che utilizzeremo delle varie tecnologie, anche perchè io con mac M1 potrei avere ulteriori problemi.  
+La X sta per qualsiasi numero. 
 
-### Spring Java
+### Java per il backend
 > Versione 11  
 
 Molto collaudata e so che mi funziona su mac M1
 
 ### Angular
-Angular o AngularJS? Versione?
+> Angular CLI: 13.1.X  
+> Node.js: 17.2.X  
+
+La versione si può verificare con `ng --version`
 
 ### Flutter  
-> Flutter: stable, 2.5.3  
+> Flutter: stable, 2.5.X  
+> Dart SDK version: 2.14.X (stable)  
 > Android SDK 31.0.0  
-> Dart SDK version: 2.14.4 (stable)  
 
+Non so bene se serva e dove specificare un Android SDK.  
 Per scoprire la versione installata sul proprio dispositivo runnare:  
 ```
 flutter doctor
