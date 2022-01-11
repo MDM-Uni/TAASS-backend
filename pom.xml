@@ -14,6 +14,8 @@
     <modules>
         <module>ospedale-microservizio</module>
         <module>storia-animale-microservizio</module>
+        <module>negozio-microservizio</module>
+        <module>utente-microservizio</module>
     </modules>
 
 
