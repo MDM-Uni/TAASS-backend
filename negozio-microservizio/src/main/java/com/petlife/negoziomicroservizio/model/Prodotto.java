@@ -26,8 +26,8 @@ public class Prodotto {
     @Column(name = "prezzo", nullable = false)
     private double prezzo;
 
-    @Column(name = "cateogoria")
-    private String cateogoria;
+    @Column(name = "categoria")
+    private String categoria;
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
@@ -35,12 +35,12 @@ public class Prodotto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Prodotto prodotto = (Prodotto) o;
-        return id == prodotto.id && Double.compare(prodotto.prezzo, prezzo) == 0 && nome.equals(prodotto.nome) && Objects.equals(cateogoria, prodotto.cateogoria);
+        return id == prodotto.id && Double.compare(prodotto.prezzo, prezzo) == 0 && nome.equals(prodotto.nome) && Objects.equals(categoria, prodotto.categoria);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nome, prezzo, cateogoria);
+        return Objects.hash(id, nome, prezzo, categoria);
     }
     //</editor-fold>
 }
