@@ -3,6 +3,7 @@ package com.petlife.ospedalemicroservizio.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,7 +13,7 @@ public class Ospedale {
    @GeneratedValue(strategy = GenerationType.AUTO)
    private Long id;
    private String nome;
-   @OneToMany private List<Visita> visite;
+   @OneToMany private List<Visita> visite = new ArrayList<>();
    @OneToOne private Indirizzo indirizzo;
 
    //getters
@@ -48,4 +49,5 @@ public class Ospedale {
    public void setIndirizzo(Indirizzo indirizzo) {
       this.indirizzo = indirizzo;
    }
+
 }

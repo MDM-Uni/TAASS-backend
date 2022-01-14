@@ -15,12 +15,40 @@ public class Visita implements Evento{
    private LocalDateTime data;
    private Duration durata;
    private String note;
-   @Enumerated(EnumType.STRING)
-   private TipoVisita tipoVisita;
+   @Enumerated(EnumType.STRING) private TipoVisita tipoVisita;
 
+   //getters and setters
    @Override
    public Long getId() {
       return id;
+   }
+
+   public void setData(LocalDateTime data) {
+      this.data = data;
+   }
+
+   public Duration getDurata() {
+      return durata;
+   }
+
+   public void setDurata(Duration durata) {
+      this.durata = durata;
+   }
+
+   public String getNote() {
+      return note;
+   }
+
+   public void setNote(String note) {
+      this.note = note;
+   }
+
+   public TipoVisita getTipoVisita() {
+      return tipoVisita;
+   }
+
+   public void setTipoVisita(TipoVisita tipoVisita) {
+      this.tipoVisita = tipoVisita;
    }
 
    @Override
