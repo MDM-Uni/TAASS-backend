@@ -2,7 +2,7 @@
 # Git Policy
 1. Non lavorare mai sul branch _main_ se si vuole modificare il codice o file ad esso collegato che potrebbero portare problemi all'esecuzione.
 2. Quando si vuole lavorare ad un task di Trello, creare un nuovo branch che un nome significativo della feature da implementare.
-3. Fare una `git rebase` sul branch _main_ solo quando il codice è stato testato. [Perchè non usare _git merge_?](#perchè-non-usare-git-merge) 
+3. Fare una `git merge` sul branch _main_ solo quando il codice è stato testato. [Pro e contro del merge e rebase (con tutorial)](https://www.youtube.com/watch?v=Nftif2ynvdA&t=298s&ab_channel=JetBrainsTV) 
 4. Mi sembra scontato ma, dare nomi significativi ai commit.
 
 # Project configuration
@@ -46,3 +46,6 @@ dart --version
 # Note
 ## Perchè non usare git merge
 Perchè non mantiene su un'unica linea temporale i commit e se un branch viene eliminato dopo il 'git merge', vengono persi tutti i commit che hanno portato al completamento della feature (ovviamente rimane il commit di merge). E' una questione estetica e di analytics più che altro.
+
+## Perchè non usare git rebase
+Perchè può portare più conflitti del dovuto
