@@ -23,7 +23,7 @@ public class Utente {
     @JoinColumn(name = "carrello_id", unique = true)
     private Carrello carrello;
 
-    //<editor-fold desc="equals and hashCode" defaultstate=collapsed>
+    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

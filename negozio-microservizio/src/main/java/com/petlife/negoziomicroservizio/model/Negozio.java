@@ -31,7 +31,7 @@ public class Negozio {
     @JoinColumn(name = "negozio_id")
     private List<Ordine> ordini = new ArrayList<>();
 
-    //<editor-fold desc="equals and hashCode" defaultstate=collapsed>
+    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -36,7 +36,7 @@ public class Carrello {
         return prodotti.entrySet().parallelStream().mapToDouble(e -> e.getKey().getPrezzo() * e.getValue()).sum();
     }
 
-    //<editor-fold desc="equals and hashCode" defaultstate=collapsed>
+    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

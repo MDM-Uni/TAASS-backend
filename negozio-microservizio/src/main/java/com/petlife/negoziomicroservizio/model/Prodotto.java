@@ -29,7 +29,7 @@ public class Prodotto {
     @Column(name = "cateogoria")
     private String cateogoria;
 
-    //<editor-fold desc="equals and hashCode" defaultstate=collapsed>
+    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -31,7 +31,7 @@ public class Indirizzo {
     @Column(name = "interno")
     private String interno;
 
-    //<editor-fold desc="equals and hashCode" defaultstate=collapsed>
+    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
