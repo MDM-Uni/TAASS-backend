@@ -38,14 +38,27 @@ public class OspedaleController {
         }
     }
 
+    /**
+     * per creare le informazioni dell'Ospedale o cambiarle
+     * @param osp
+     */
     @PostMapping("/pushInfo")
     @ResponseStatus(HttpStatus.OK)
     public void createOspedale(@RequestBody Ospedale osp) {
+        loadOspedale();
+        if (ospedale == null) { //creazione ex-novo
+            ospedale = osp;
+            if (osp.getVisite() != null) visitaRepository.saveAll(osp.getVisite());
+            else osp.setVisite(new ArrayList<>());
+        } else { //aggiornamento
+            ospedale.setNome(osp.getNome());
+            ospedale.setIndirizzo(osp.getIndirizzo());
+        }
+        //in comune con i due rami dell'if
         if (osp.getIndirizzo() != null) indirizzoRepository.save(osp.getIndirizzo());
-        if (osp.getVisite() != null) visitaRepository.saveAll(osp.getVisite());
-        else osp.setVisite(new ArrayList<>());
         ospedaleRepository.save(osp);
     }
+
 
     @GetMapping("/getVisite")
     public List<Visita> getVisite() {
