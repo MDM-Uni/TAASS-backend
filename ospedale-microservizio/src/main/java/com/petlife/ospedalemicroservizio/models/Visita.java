@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -16,6 +17,7 @@ public class Visita implements Evento{
    private Integer durataInMinuti;
    private String note;
    @Enumerated(EnumType.STRING) private TipoVisita tipoVisita;
+   private Long idAnimale;
 
    //getters and setters
    @Override
@@ -49,6 +51,27 @@ public class Visita implements Evento{
 
    public void setTipoVisita(TipoVisita tipoVisita) {
       this.tipoVisita = tipoVisita;
+   }
+
+   public Long getIdAnimale() {
+      return idAnimale;
+   }
+
+   public void setIdAnimale(Long idAnimale) {
+      this.idAnimale = idAnimale;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Visita visita = (Visita) o;
+      return id.equals(visita.id);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(id);
    }
 
    @Override

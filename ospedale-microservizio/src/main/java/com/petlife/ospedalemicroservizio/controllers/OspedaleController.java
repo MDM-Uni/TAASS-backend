@@ -31,11 +31,18 @@ public class OspedaleController {
         return OspedaleController.ospedale;
     }
 
-    private void loadOspedale() {
+    private boolean loadOspedale() {
         if (ospedale == null) {
             List<Ospedale> ospedali = ospedaleRepository.findAll();
-            OspedaleController.ospedale = ospedali.get(0);
+            try {
+                OspedaleController.ospedale = ospedali.get(0);
+            }
+            catch (IndexOutOfBoundsException e) {
+                System.out.println("Nessun ospedale trovato");
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -45,8 +52,8 @@ public class OspedaleController {
     @PostMapping("/pushInfo")
     @ResponseStatus(HttpStatus.OK)
     public void createOspedale(@RequestBody Ospedale osp) {
-        loadOspedale();
-        if (ospedale == null) { //creazione ex-novo
+        boolean esisteOspedale = loadOspedale();
+        if (!esisteOspedale) { //creazione ex-novo
             ospedale = osp;
             if (osp.getVisite() != null) visitaRepository.saveAll(osp.getVisite());
             else osp.setVisite(new ArrayList<>());
@@ -58,7 +65,6 @@ public class OspedaleController {
         if (osp.getIndirizzo() != null) indirizzoRepository.save(osp.getIndirizzo());
         ospedaleRepository.save(osp);
     }
-
 
     @GetMapping("/getVisite")
     public List<Visita> getVisite() {
@@ -78,5 +84,15 @@ public class OspedaleController {
         catch (NoSuchElementException e) {
             System.out.println("Nessun ospedale trovato");
         }
+    }
+
+    @PostMapping("/deleteVisita")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteVisita(@RequestBody Visita visita) {
+        loadOspedale();
+        OspedaleController.ospedale.getVisite().remove(visita);
+        ospedaleRepository.save(OspedaleController.ospedale);
+        visitaRepository.delete(visita);
+
     }
 }
