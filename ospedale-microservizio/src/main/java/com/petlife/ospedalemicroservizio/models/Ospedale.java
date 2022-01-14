@@ -12,8 +12,8 @@ public class Ospedale {
    @GeneratedValue(strategy = GenerationType.AUTO)
    private Long id;
    private String nome;
-   @OneToMany
-   private List<Visita> visite;
+   @OneToMany private List<Visita> visite;
+   @OneToOne private Indirizzo indirizzo;
 
    //getters
    public Long getId() {
@@ -28,6 +28,10 @@ public class Ospedale {
       return visite;
    }
 
+   public Indirizzo getIndirizzo() {
+      return indirizzo;
+   }
+
    //setters
    public void setId(Long id) {
       this.id = id;
@@ -39,5 +43,9 @@ public class Ospedale {
 
    public void setVisite(List<Visita> visite) {
       this.visite = visite;
+   }
+
+   public void setIndirizzo(Indirizzo indirizzo) {
+      this.indirizzo = indirizzo;
    }
 }
