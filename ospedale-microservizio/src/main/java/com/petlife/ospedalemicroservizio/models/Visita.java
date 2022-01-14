@@ -1,9 +1,9 @@
 package com.petlife.ospedalemicroservizio.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,7 +13,7 @@ public class Visita implements Evento{
    @GeneratedValue(strategy = GenerationType.AUTO)
    private Long id;
    private LocalDateTime data;
-   private Duration durata;
+   private Integer durataInMinuti;
    private String note;
    @Enumerated(EnumType.STRING) private TipoVisita tipoVisita;
 
@@ -27,12 +27,12 @@ public class Visita implements Evento{
       this.data = data;
    }
 
-   public Duration getDurata() {
-      return durata;
+   public Integer getDurata() {
+      return durataInMinuti;
    }
 
-   public void setDurata(Duration durata) {
-      this.durata = durata;
+   public void setDurata(int durata) {
+      this.durataInMinuti = durata;
    }
 
    public String getNote() {
@@ -52,6 +52,7 @@ public class Visita implements Evento{
    }
 
    @Override
+   @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
    public LocalDateTime getData() {
       return data;
    }

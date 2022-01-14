@@ -61,7 +61,6 @@ public class OspedaleController {
             OspedaleController.ospedale.getVisite().add(visita);
             visitaRepository.save(visita);
             ospedaleRepository.save(OspedaleController.ospedale);
-            System.out.println();
         }
         catch (NoSuchElementException e) {
             System.out.println("Nessun ospedale trovato");
