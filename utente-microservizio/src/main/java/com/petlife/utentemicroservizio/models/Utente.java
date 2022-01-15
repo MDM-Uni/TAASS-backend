@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name = "Utente")
+@Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utente implements Evento{
     @Id
