@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="Utente")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utente implements Evento{
     @Id

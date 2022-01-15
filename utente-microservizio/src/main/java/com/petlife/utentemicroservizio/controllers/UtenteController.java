@@ -19,9 +19,10 @@ import java.util.LinkedHashMap;
 @RestController
 public class UtenteController {
 
-    @Autowired
+    @Autowired(required = false)
     private UtenteRepository UtenteRepository;
 
+    @Autowired(required = false)
     private AnimaleRepository AnimaleRepository;
 
     @GetMapping("/")
