@@ -44,7 +44,7 @@ public class Animale {
         return peso;
     }
 
-    public boolean isPeloLungo() {
+    public boolean getPeloLungo() {
         return peloLungo;
     }
 
@@ -55,4 +55,23 @@ public class Animale {
     public void setPeso(Float peso) {
         this.peso = peso;
     }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setDataDiNascita(Date dataDiNascita) {
+        this.dataDiNascita = dataDiNascita;
+    }
+
+    public void setRazza(String razza) {
+        this.razza = razza;
+    }
+
+    public void setPeloLungo(boolean peloLungo) {
+        this.peloLungo = peloLungo;
+    }
+
+
+
 }

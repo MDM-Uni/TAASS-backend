@@ -28,6 +28,12 @@ public class Utente implements Evento{
     @Transient
     private List<Animale> animali = new ArrayList<>();
 
+    public Utente(String nome, String email, List<Animale> animali) {
+        this.nome = nome;
+        this.email = email;
+        this.animali = animali;
+    }
+
     @Override
     public Long getId() {
         return id;
@@ -64,4 +70,21 @@ public class Utente implements Evento{
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
+
+    public List<Animale> getAnimali() {
+        return animali;
+    }
+
+    public void setAnimali(List<Animale> animali) {
+        this.animali = animali;
+    }
+
+    public void addAnimale(Animale animale){
+        this.animali.add(animale);
+    }
+
+    public void removeAnimale(Animale animale){
+        this.animali.remove(animale);
+    }
+
 }
