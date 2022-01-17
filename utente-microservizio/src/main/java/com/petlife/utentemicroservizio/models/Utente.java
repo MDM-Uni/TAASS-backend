@@ -13,20 +13,16 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Utente implements Evento{
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
     private String nome;
-    @Column(nullable = false)
-    private String cognome;
     @JsonIgnore
     private String password;
     @NotNull
     private String email;
-    @NotNull
-    private String providerId;
     @Transient
-    private List<Animale> animali = new ArrayList<>();
+    private List<Animale> animali;
 
     public Utente(String nome, String email, List<Animale> animali) {
         this.nome = nome;
@@ -43,9 +39,6 @@ public class Utente implements Evento{
         return nome;
     }
 
-    public String getCognome() {
-        return cognome;
-    }
 
     public String getPassword() {
         return password;
@@ -61,14 +54,6 @@ public class Utente implements Evento{
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getProviderId() {
-        return providerId;
-    }
-
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
     }
 
     public List<Animale> getAnimali() {

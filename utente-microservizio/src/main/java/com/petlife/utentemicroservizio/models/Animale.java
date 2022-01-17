@@ -1,14 +1,24 @@
 package com.petlife.utentemicroservizio.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.*;
 import java.nio.FloatBuffer;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Animale {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(nullable = false)
     private String nome;
+    @Column(nullable = false)
     private Date dataDiNascita;
+    @Transient
     private List<String> patologie;
     private String razza;
     private Float peso;
