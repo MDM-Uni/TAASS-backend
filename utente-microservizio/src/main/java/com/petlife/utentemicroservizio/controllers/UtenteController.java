@@ -40,6 +40,15 @@ public class UtenteController {
         return users;
     }
 
+    @GetMapping("/animals/{id}")
+    public List<Animale> getAnimalsUser(@PathVariable("id") long id) {
+        Optional<Utente> user = utenteRepository.findById(id);
+        if(user.isPresent()) {
+            return user.get().getAnimali();
+        }
+        return new ArrayList<Animale>();
+    }
+
     @DeleteMapping("/user/delete")
     public ResponseEntity<String> deleteUser(@RequestBody Utente utente) {
         utenteRepository.delete(utente);
