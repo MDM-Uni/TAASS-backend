@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 public interface UtenteRepository extends CrudRepository<Utente,Long> {
-    Utente findByEmail(String email);
+    Optional<Utente> findByEmail(String email);
 }
 
 

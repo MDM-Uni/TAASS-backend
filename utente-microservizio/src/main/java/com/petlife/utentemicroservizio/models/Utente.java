@@ -30,6 +30,8 @@ public class Utente implements Evento{
         this.animali = animali;
     }
 
+    public Utente(){}
+
     @Override
     public Long getId() {
         return id;

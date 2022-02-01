@@ -55,7 +55,7 @@ public class UtenteController {
         return new ResponseEntity<>("User" + utente.getNome() + "è stato eliminato correttamente", HttpStatus.OK);
     }
 
-    @PutMapping("/addAnimal/{id}")
+    @PostMapping("/addAnimal/{id}")
     public ResponseEntity<Utente> addAnimal(@PathVariable("id") long id, @RequestBody Animale animale) {
         Optional<Utente> user = utenteRepository.findById(id);
         if (user.isPresent()) {
@@ -67,7 +67,7 @@ public class UtenteController {
         }
     }
 
-    @PutMapping("/removeAnimal/{id}")
+    @DeleteMapping("/removeAnimal/{id}")
     public ResponseEntity<Utente> removeAnimal(@PathVariable("id") long id, @RequestBody Animale animale) {
         Optional<Utente> user = utenteRepository.findById(id);
         if (user.isPresent()) {
@@ -99,15 +99,13 @@ public class UtenteController {
         return null;
     }
 
-    @GetMapping(value = "user/email/{email}")
-    public Utente findByEmail(@PathVariable String email) {
-        return utenteRepository.findByEmail(email);
+    @GetMapping(value = "user/{email}/{nome}")
+    public Utente getUser(@PathVariable String email, @PathVariable String nome) {
+        Optional<Utente> user = utenteRepository.findByEmail(email);
+        return user.orElseGet(() -> utenteRepository.save(new Utente(nome, email, new ArrayList<>())));
     }
 
-    @GetMapping(value = "customers/id/{userid}")
-    public Optional<Utente> findByAge(@PathVariable Long userid) {
-        return utenteRepository.findById(userid);
-    }
+    /*
 
     @GetMapping("/")
     public String helloWorld(){
@@ -128,5 +126,7 @@ public class UtenteController {
         String email = Collections.singletonMap("email", principal.getAttribute("email")).get("email").toString();
         return "Il tuo nome è: " + username + "la tua email è: " + email;
     }
+
+    */
 
 }
