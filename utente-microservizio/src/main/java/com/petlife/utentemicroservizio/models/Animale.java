@@ -24,8 +24,13 @@ public class Animale {
     private Float peso;
     private boolean peloLungo; //0 se corto
 
-    public Animale(Long id, String nome, Date dataDiNascita, List<String> patologie, String razza, Float peso, boolean peloLungo) {
-        this.id = id;
+
+    public Animale(String nome, String razza) {
+        this.nome = nome;
+        this.razza = razza;
+    }
+
+    public Animale(String nome, Date dataDiNascita, List<String> patologie, String razza, Float peso, boolean peloLungo) {
         this.nome = nome;
         this.dataDiNascita = dataDiNascita;
         this.patologie = patologie;

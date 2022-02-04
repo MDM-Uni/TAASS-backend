@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 public class UtenteController {
 
@@ -61,6 +61,7 @@ public class UtenteController {
         if (user.isPresent()) {
             Utente _utente = user.get();
             _utente.addAnimale(animale);
+            animaleRepository.save(animale);
             return new ResponseEntity<>(utenteRepository.save(_utente), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -73,6 +74,7 @@ public class UtenteController {
         if (user.isPresent()) {
             Utente _utente = user.get();
             _utente.removeAnimale(animale);
+            animaleRepository.delete(animale);
             return new ResponseEntity<>(utenteRepository.save(_utente), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -80,7 +82,7 @@ public class UtenteController {
     }
 
     @PutMapping("/updateAnimal/{idU}/{idA}")
-    public Animale updateAnimal(@PathVariable("idU") long id, @PathVariable("idA") long idA, @RequestBody Animale animale) {
+    public ResponseEntity<Animale> updateAnimal(@PathVariable("idU") long id, @PathVariable("idA") long idA, @RequestBody Animale animale) {
         Optional<Utente> user = utenteRepository.findById(id);
         Optional<Animale> animal = animaleRepository.findById(id);
         if (user.isPresent() && animal.isPresent()) {
@@ -93,10 +95,10 @@ public class UtenteController {
                 _animale.setPeso(animale.getPeso());
                 _animale.setPeloLungo(animale.getPeloLungo());
                 _animale.setRazza(animale.getRazza());
-                return animaleRepository.save(_animale);
+                return new ResponseEntity<>(animaleRepository.save(_animale), HttpStatus.OK);
             }
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "user/{email}/{nome}")
