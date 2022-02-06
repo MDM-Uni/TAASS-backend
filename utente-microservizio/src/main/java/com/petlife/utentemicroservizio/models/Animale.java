@@ -9,25 +9,25 @@ import java.util.List;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Animale {
+public class Animale implements Evento{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
     private String nome;
-    @Column(nullable = false)
+    @Column(name = "dataNascita")
     private Date dataDiNascita;
-    @Transient
+    @ElementCollection
+    @CollectionTable(name = "patologie")
     private List<String> patologie;
     private String razza;
     private Float peso;
     private boolean peloLungo; //0 se corto
 
 
-    public Animale(String nome, String razza) {
+    public Animale(String nome) {
         this.nome = nome;
-        this.razza = razza;
     }
 
     public Animale(String nome, Date dataDiNascita, List<String> patologie, String razza, Float peso, boolean peloLungo) {
@@ -37,6 +37,10 @@ public class Animale {
         this.razza = razza;
         this.peso = peso;
         this.peloLungo = peloLungo;
+    }
+
+    public Animale() {
+
     }
 
     public String getNome() {
@@ -88,5 +92,8 @@ public class Animale {
     }
 
 
-
+    @Override
+    public Long getId() {
+        return id;
+    }
 }

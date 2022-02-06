@@ -21,7 +21,7 @@ public class Utente implements Evento{
     private String password;
     @NotNull
     private String email;
-    @Transient
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Animale> animali;
 
     public Utente(String nome, String email, List<Animale> animali) {
