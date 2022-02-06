@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("ospedale")
+@CrossOrigin(origins = "*")
 public class OspedaleController {
     //singleton
     public static Ospedale ospedale;

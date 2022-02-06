@@ -29,11 +29,11 @@ public class Visita implements Evento{
       this.data = data;
    }
 
-   public Integer getDurata() {
+   public Integer getDurataInMinuti() {
       return durataInMinuti;
    }
 
-   public void setDurata(int durata) {
+   public void setDurataInMinuti(int durata) {
       this.durataInMinuti = durata;
    }
 
@@ -75,7 +75,6 @@ public class Visita implements Evento{
    }
 
    @Override
-   @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
    public LocalDateTime getData() {
       return data;
    }
