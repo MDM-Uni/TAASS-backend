@@ -1,6 +1,8 @@
 package com.petlife.ospedalemicroservizio.controllers;
 
 import com.petlife.ospedalemicroservizio.models.Ospedale;
+import com.petlife.ospedalemicroservizio.models.TipoEvento;
+import com.petlife.ospedalemicroservizio.models.TipoVisita;
 import com.petlife.ospedalemicroservizio.models.Visita;
 import com.petlife.ospedalemicroservizio.repositories.IndirizzoRepository;
 import com.petlife.ospedalemicroservizio.repositories.OspedaleRepository;
@@ -10,9 +12,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("ospedale")
@@ -67,10 +69,26 @@ public class OspedaleController {
         ospedaleRepository.save(osp);
     }
 
-    @GetMapping("/getVisite")
-    public List<Visita> getVisite() {
+    @GetMapping({"/getVisite", "/getVisite/{idVisita}"})
+    public List<Visita> getVisite(
+            @PathVariable(value = "idVisita") Optional<Long> idVisita,
+            @RequestParam(value = "idAnimale") Optional<Long> idAnimale,
+            @RequestParam(value = "tipoVisita") Optional<String> tipoVisita
+    ) {
         loadOspedale();
-        return OspedaleController.ospedale.getVisite();
+        Stream<Visita> streamVisite = OspedaleController.ospedale.getVisite().stream();
+        //nel caso sia un URL del tipo /getVisite/{idVisita}
+        if (idVisita.isPresent()) {
+            streamVisite = streamVisite.filter(visita -> idVisita.get().equals(visita.getId()));
+            assert(streamVisite.count() <= 1);
+        } else { //nel caso sia un URL del tipo /getVisite
+            if (idAnimale.isPresent())
+                streamVisite = streamVisite.filter(v -> idAnimale.get().equals(v.getIdAnimale()));
+            if (tipoVisita.isPresent()) {
+                streamVisite = streamVisite.filter(v -> tipoVisita.get().equals(v.getTipoVisita().toString()));
+            }
+        }
+        return streamVisite.collect(Collectors.toList());
     }
 
     @PostMapping("/pushVisita")
