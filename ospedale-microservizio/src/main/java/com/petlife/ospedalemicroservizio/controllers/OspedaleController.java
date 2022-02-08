@@ -82,11 +82,10 @@ public class OspedaleController {
             streamVisite = streamVisite.filter(visita -> idVisita.get().equals(visita.getId()));
             assert(streamVisite.count() <= 1);
         } else { //nel caso sia un URL del tipo /getVisite
-            if (idAnimale.isPresent())
+            if (idAnimale.isPresent() && idAnimale.get() != 0)
                 streamVisite = streamVisite.filter(v -> idAnimale.get().equals(v.getIdAnimale()));
-            if (tipoVisita.isPresent()) {
+            if (tipoVisita.isPresent() && !tipoVisita.get().equals(""))
                 streamVisite = streamVisite.filter(v -> tipoVisita.get().equals(v.getTipoVisita().toString()));
-            }
         }
         return streamVisite.collect(Collectors.toList());
     }
