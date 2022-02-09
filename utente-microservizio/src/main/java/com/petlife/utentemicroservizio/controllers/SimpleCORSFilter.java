@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class SimpleCORSFilter implements Filter {
+public class SimpleCORSFilter {
 
+    /*
     public static final Logger logger = LoggerFactory.getLogger(SimpleCORSFilter.class);
 
     @Override
@@ -33,4 +34,6 @@ public class SimpleCORSFilter implements Filter {
     public void destroy() {
         Filter.super.destroy();
     }
+
+     */
 }

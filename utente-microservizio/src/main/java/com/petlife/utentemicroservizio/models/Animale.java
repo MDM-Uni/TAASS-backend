@@ -1,20 +1,26 @@
 package com.petlife.utentemicroservizio.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import javax.persistence.*;
-import java.nio.FloatBuffer;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Entity
+@Data
+@RequiredArgsConstructor
+@Getter
+@Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Animale implements Evento{
+public class Animale implements Evento, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(nullable = false)
+    @Column(name="nome")
     private String nome;
     @Column(name = "dataNascita")
     private Date dataDiNascita;
@@ -37,10 +43,6 @@ public class Animale implements Evento{
         this.razza = razza;
         this.peso = peso;
         this.peloLungo = peloLungo;
-    }
-
-    public Animale() {
-
     }
 
     public String getNome() {
@@ -95,5 +97,18 @@ public class Animale implements Evento{
     @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Animale{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", dataDiNascita=" + dataDiNascita +
+                ", patologie=" + patologie +
+                ", razza='" + razza + '\'' +
+                ", peso=" + peso +
+                ", peloLungo=" + peloLungo +
+                '}';
     }
 }

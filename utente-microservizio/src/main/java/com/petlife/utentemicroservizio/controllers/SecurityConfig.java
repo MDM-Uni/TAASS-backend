@@ -15,11 +15,13 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
+        http    .cors()
+                .and()
+                .csrf()
+                .disable()
                 .antMatcher("/**").authorizeRequests()
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
@@ -31,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .oauth2Login();
     }
+
 
 
 }
