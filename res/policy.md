@@ -2,8 +2,13 @@
 # Git Policy
 1. Non lavorare mai sul branch _main_ se si vuole modificare il codice o file ad esso collegato che potrebbero portare problemi all'esecuzione.
 2. Quando si vuole lavorare ad un task di Trello, creare un nuovo branch che un nome significativo della feature da implementare.
-3. Fare una `git merge` sul branch _main_ solo quando il codice è stato testato. [Pro e contro del merge e rebase (con tutorial)](https://www.youtube.com/watch?v=Nftif2ynvdA&t=298s&ab_channel=JetBrainsTV) 
+3. Fare una `git merge` sul branch _master_ solo quando:
+   - il codice è stato testato.
+   - fare prima checkout sul branch _master_ e vedere lo stato di avanzamento dei lavori
+   - fare `git merge` cercando di non togliere funzionalità già presenti nel _master_ o introdurre bug.
 4. Mi sembra scontato ma, dare nomi significativi ai commit.
+
+Curiosità: [Pro e contro del merge e rebase (con tutorial)](https://www.youtube.com/watch?v=Nftif2ynvdA&t=298s&ab_channel=JetBrainsTV) 
 
 # Project configuration
 Creare i seguenti progetti separati:
