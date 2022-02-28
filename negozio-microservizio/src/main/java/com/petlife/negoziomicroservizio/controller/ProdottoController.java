@@ -10,20 +10,20 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/prodotti")
 public class ProdottoController {
 
     @Autowired
     private ProdottoRepository repository;
 
-    @GetMapping("/prodotti")
+    @GetMapping
     public List<Prodotto> getAllProdotti() {
         List<Prodotto> prodotti = new ArrayList<>();
         repository.findAll().forEach(prodotti::add);
         return prodotti;
     }
 
-    @PostMapping("/prodotto/crea")
+    @PostMapping("/crea")
     public void salvaProdotto(@RequestAttribute Prodotto prodotto) {
         repository.save(prodotto);
     }
