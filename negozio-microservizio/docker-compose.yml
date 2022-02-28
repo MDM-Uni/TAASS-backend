@@ -30,6 +30,8 @@ services:
       - "dbpostgresql:pgsql-server"
     depends_on:
       - dbpostgresql
+    logging:
+      driver: none
 
   app:
     build: .
