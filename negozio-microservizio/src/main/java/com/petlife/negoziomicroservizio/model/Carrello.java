@@ -36,6 +36,24 @@ public class Carrello {
         return prodotti.entrySet().parallelStream().mapToDouble(e -> e.getKey().getPrezzo() * e.getValue()).sum();
     }
 
+    public void aggiungiProdotto(Prodotto prodotto, int quantita) {
+        int numProdotto = prodotti.getOrDefault(prodotto, 0);
+        prodotti.put(prodotto, numProdotto + quantita);
+    }
+
+    public boolean rimuoviProdotto(Prodotto prodotto, int quantita) {
+        if (!prodotti.containsKey(prodotto))
+            return false;
+        else {
+            int numProdotto = prodotti.get(prodotto);
+            if (numProdotto <= quantita)
+                prodotti.remove(prodotto);
+            else
+                prodotti.put(prodotto, numProdotto - quantita);
+            return true;
+        }
+    }
+
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
