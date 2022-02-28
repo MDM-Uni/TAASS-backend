@@ -7,8 +7,10 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -29,7 +31,7 @@ public class Carrello {
     private Map<Prodotto, Integer> prodotti = new HashMap<>();
 
     public int getNumeroArticoli() {
-        return prodotti.size();
+        return prodotti.values().parallelStream().mapToInt(e -> e).sum();
     }
 
     public double getTotale() {
@@ -52,6 +54,12 @@ public class Carrello {
                 prodotti.put(prodotto, numProdotto - quantita);
             return true;
         }
+    }
+
+    public List<Map<String, Object>> getProdotti() {
+        return prodotti.entrySet().stream()
+                .map(e -> Map.of("prodotto", e.getKey(),"quantita", e.getValue()))
+                .collect(Collectors.toList());
     }
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
