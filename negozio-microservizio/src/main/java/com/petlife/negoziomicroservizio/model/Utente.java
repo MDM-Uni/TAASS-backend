@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter
@@ -22,6 +22,11 @@ public class Utente {
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "carrello_id", unique = true)
     private Carrello carrello;
+
+    @OneToMany(orphanRemoval = true)
+    @JoinColumn(name = "ordine_id")
+    @ToString.Exclude
+    private List<Prodotto> ordini = new ArrayList<>();
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
