@@ -3,6 +3,7 @@ package com.petlife.negoziomicroservizio.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@ToString
 @RequiredArgsConstructor
 public class Negozio {
 
@@ -25,10 +27,12 @@ public class Negozio {
 
     @OneToMany(orphanRemoval = true)
     @JoinColumn(name = "negozio_id")
+    @ToString.Exclude
     private List<Prodotto> prodotti = new ArrayList<>();
 
     @OneToMany(orphanRemoval = true)
     @JoinColumn(name = "negozio_id")
+    @ToString.Exclude
     private List<Ordine> ordini = new ArrayList<>();
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
