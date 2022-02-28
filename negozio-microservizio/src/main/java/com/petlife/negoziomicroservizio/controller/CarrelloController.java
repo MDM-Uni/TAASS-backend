@@ -20,7 +20,7 @@ public class CarrelloController {
     @Autowired
     private ProdottoRepository prodottoRepository;
 
-    @PostMapping("/{idCarrello}/prodotti/{idProdotto}/aggiungi/{quantita}")
+    @GetMapping("/{idCarrello}/prodotti/{idProdotto}/aggiungi/{quantita}")
     public ResponseEntity<String> aggiungiProdotto(
             @PathVariable long idCarrello,
             @PathVariable long idProdotto,
@@ -40,7 +40,7 @@ public class CarrelloController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/{idCarrello}/prodotti/{idProdotto}/rimuovi/{quantita}")
+    @GetMapping("/{idCarrello}/prodotti/{idProdotto}/rimuovi/{quantita}")
     public ResponseEntity<String> rimuoviProdotto(
             @PathVariable long idCarrello,
             @PathVariable long idProdotto,
