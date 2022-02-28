@@ -24,7 +24,7 @@ public class ProdottoController {
     }
 
     @PostMapping("/crea")
-    public void salvaProdotto(@RequestAttribute Prodotto prodotto) {
+    public void salvaProdotto(@RequestBody Prodotto prodotto) {
         repository.save(prodotto);
     }
 }
