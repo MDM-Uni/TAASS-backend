@@ -35,10 +35,13 @@ services:
     build: .
     image: negozio
     container_name: negozio
+    volumes:
+      - negozio-data:/var/lib/negozio
     ports:
       - "8080:8080"
     depends_on:
       - dbpostgresql
+      - pgadmin
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/negozio
       - SPRING_DATASOURCE_USERNAME=admin
@@ -47,3 +50,4 @@ services:
 volumes:
   db-data:
   pgadmin-data:
+  negozio-data:
