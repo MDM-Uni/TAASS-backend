@@ -1,7 +1,9 @@
 package com.petlife.ospedalemicroservizio.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,6 +11,9 @@ import java.util.Objects;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Visita implements Evento{
    @Id
    @GeneratedValue(strategy = GenerationType.AUTO)
