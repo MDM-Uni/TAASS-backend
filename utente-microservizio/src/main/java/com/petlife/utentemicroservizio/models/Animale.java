@@ -24,7 +24,7 @@ public class Animale implements Evento, Serializable {
     private String nome;
     @Column(name = "dataNascita")
     private Date dataDiNascita;
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     @CollectionTable(name = "patologie")
     private List<String> patologie;
     private String razza;

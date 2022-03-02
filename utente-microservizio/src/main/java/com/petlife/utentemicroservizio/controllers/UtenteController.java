@@ -4,19 +4,22 @@ import com.petlife.utentemicroservizio.models.Animale;
 import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.UtenteRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
 public class UtenteController {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private UtenteRepository utenteRepository;
@@ -34,6 +37,16 @@ public class UtenteController {
         List<Utente> users = new ArrayList<>();
         utenteRepository.findAll().forEach(users::add);
         return users;
+    }
+
+    @GetMapping("/exists_user/{id}")
+    public ResponseEntity<String> existUser(@PathVariable("id") long id) {
+        Optional<Utente> user = utenteRepository.findById(id);
+        if(user.isPresent()) {
+            return new ResponseEntity<>("true",HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("false",HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping("/animals/{id}")
@@ -64,21 +77,6 @@ public class UtenteController {
         }
     }
 
-
-    @PostMapping("/addAnimalTest/{id}/{nome}")
-    public Utente addAnimalTest(@PathVariable("id") long id, @PathVariable("nome") String nome) {
-        Optional<Utente> user = utenteRepository.findById(id);
-        if (user.isPresent()) {
-            Utente _utente = user.get();
-            Animale animale = new Animale(nome);
-            _utente.addAnimale(animale);
-            addAnimal(nome);
-            return utenteRepository.save(_utente);
-        } else {
-            return null;
-        }
-    }
-
     @RequestMapping(value="/aggiungiAnimale/{nome}", method = RequestMethod.POST)
     public ResponseEntity<Animale> addAnimal(@PathVariable("nome") String nome) {
         return new ResponseEntity<Animale>(animaleRepository.save(new Animale(nome)),HttpStatus.OK);
@@ -92,6 +90,8 @@ public class UtenteController {
             Utente _utente = user.get();
             _utente.removeAnimale(animal.get());
             animaleRepository.delete(animal.get());
+            utenteRepository.save(_utente);
+            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_A,animal.get());
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -106,7 +106,6 @@ public class UtenteController {
             Utente _utente = user.get();
             Animale _animale = animal.get();
             if(_utente.getAnimali().contains(_animale)){
-                System.out.println(_animale);
                 _animale.setNome(animale.getNome());
                 _animale.setDataDiNascita(animale.getDataDiNascita());
                 _animale.setPatologie(animale.getPatologie());
@@ -123,11 +122,16 @@ public class UtenteController {
     public Utente getUser(@PathVariable String email, @PathVariable String nome) {
         Optional<Utente> user = utenteRepository.findByEmail(email);
         List<Animale> animali = new ArrayList<Animale>();
-        return user.orElseGet(() -> utenteRepository.save(new Utente(nome, email, animali)));
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            Utente utente = utenteRepository.save(new Utente(nome, email, animali));
+            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_B,utente);
+            return utente;
+        }
     }
 
     /*
-
     @GetMapping("/")
     public String helloWorld(){
         return "Autenticarsi prima";
