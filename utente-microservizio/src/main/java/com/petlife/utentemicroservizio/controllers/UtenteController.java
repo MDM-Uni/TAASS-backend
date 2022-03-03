@@ -28,7 +28,7 @@ public class UtenteController {
     private AnimaleRepository animaleRepository;
 
     @PostMapping(value = "/user/create")
-    public Utente postCustomer(@RequestBody Utente utente) {
+    public Utente postUser(@RequestBody Utente utente) {
         return utenteRepository.save(new Utente(utente.getNome(),utente.getEmail(),utente.getAnimali()));
     }
 
