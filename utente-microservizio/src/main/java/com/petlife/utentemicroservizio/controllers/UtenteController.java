@@ -40,28 +40,25 @@ public class UtenteController {
     }
 
     @GetMapping("/exists_user/{id}")
-    public ResponseEntity<String> existUser(@PathVariable("id") long id) {
+    public ResponseEntity<Boolean> existUser(@PathVariable("id") long id) {
         Optional<Utente> user = utenteRepository.findById(id);
         if(user.isPresent()) {
-            return new ResponseEntity<>("true",HttpStatus.OK);
+            return new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("false",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/animals/{id}")
-    public List<Animale> getAnimalsUser(@PathVariable("id") long id) {
+    public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
         Optional<Utente> user = utenteRepository.findById(id);
-        if(user.isPresent()) {
-            return user.get().getAnimali();
-        }
-        return new ArrayList<Animale>();
+        return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/user/delete")
     public ResponseEntity<String> deleteUser(@RequestBody Utente utente) {
         utenteRepository.delete(utente);
-        return new ResponseEntity<>("User" + utente.getNome() + "è stato eliminato correttamente", HttpStatus.OK);
+        return new ResponseEntity<>("Utente: " + utente.getNome() + " è stato eliminato correttamente ", HttpStatus.OK);
     }
 
     @RequestMapping(value="/addAnimal/{id}", method = RequestMethod.POST)
@@ -99,7 +96,7 @@ public class UtenteController {
     }
 
     @RequestMapping(value = "/updateAnimal/{idU}/{idA}" , method = RequestMethod.PUT)
-    public Animale updateAnimal(@PathVariable("idU") long id, @PathVariable("idA") long idA, @RequestBody Animale animale) {
+    public ResponseEntity<Animale> updateAnimal(@PathVariable("idU") long id, @PathVariable("idA") long idA, @RequestBody Animale animale) {
         Optional<Utente> user = utenteRepository.findById(id);
         Optional<Animale> animal = animaleRepository.findById(idA);
         if (user.isPresent() && animal.isPresent()) {
@@ -112,10 +109,10 @@ public class UtenteController {
                 _animale.setPeso(animale.getPeso());
                 _animale.setPeloLungo(animale.getPeloLungo());
                 _animale.setRazza(animale.getRazza());
-                return animaleRepository.save(_animale);
+                return new ResponseEntity<>(animaleRepository.save(_animale),HttpStatus.OK);
             }
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(value = "user/{email}/{nome}")
