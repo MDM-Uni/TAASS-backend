@@ -1,9 +1,11 @@
 package com.petlife.negoziomicroservizio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -28,6 +30,12 @@ public class Prodotto {
 
     @Column(name = "categoria")
     private String categoria;
+
+    @Lob
+    @JsonIgnore
+    @Type(type="org.hibernate.type.ImageType")
+    @Column(name = "immagine")
+    private byte[] immagine;
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
