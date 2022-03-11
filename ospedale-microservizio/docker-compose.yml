@@ -2,7 +2,7 @@ version: '3'
 
 services:
   dbpostgresql:
-    container_name: postgres
+    container_name: postgres_ospedale
     image: "postgres"
     ports:
       - "5431:5432"
