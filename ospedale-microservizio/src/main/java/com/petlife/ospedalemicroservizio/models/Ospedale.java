@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -58,4 +59,18 @@ public class Ospedale {
       this.indirizzo = indirizzo;
    }
 
+   //<editor-fold desc="equals and hashcode" defaultstate="collapsed">
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Ospedale ospedale = (Ospedale) o;
+      return id.equals(ospedale.id);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(id);
+   }
+   //</editor-fold>
 }

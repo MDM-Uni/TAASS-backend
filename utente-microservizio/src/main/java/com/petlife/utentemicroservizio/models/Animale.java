@@ -2,20 +2,23 @@ package com.petlife.utentemicroservizio.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import java.util.Objects;
 
 @Entity
-@Data
+@ToString
 @RequiredArgsConstructor
 @Getter
 @Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Animale implements Evento, Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Animale implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,85 +33,29 @@ public class Animale implements Evento, Serializable {
     private String razza;
     private Float peso;
     private boolean peloLungo; //0 se corto
-
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<EventoPersonalizzato> storia;
 
     public Animale(String nome) {
         this.nome = nome;
     }
 
-    public Animale(String nome, Date dataDiNascita, List<String> patologie, String razza, Float peso, boolean peloLungo) {
-        this.nome = nome;
-        this.dataDiNascita = dataDiNascita;
-        this.patologie = patologie;
-        this.razza = razza;
-        this.peso = peso;
-        this.peloLungo = peloLungo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public Date getDataDiNascita() {
-        return dataDiNascita;
-    }
-
-    public List<String> getPatologie() {
-        return patologie;
-    }
-
-    public String getRazza() {
-        return razza;
-    }
-
-    public Float getPeso() {
-        return peso;
-    }
-
-    public boolean getPeloLungo() {
-        return peloLungo;
-    }
-
-    public void setPatologie(List<String> patologie) {
-        this.patologie = patologie;
-    }
-
-    public void setPeso(Float peso) {
-        this.peso = peso;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setDataDiNascita(Date dataDiNascita) {
-        this.dataDiNascita = dataDiNascita;
-    }
-
-    public void setRazza(String razza) {
-        this.razza = razza;
-    }
-
-    public void setPeloLungo(boolean peloLungo) {
-        this.peloLungo = peloLungo;
-    }
-
-
+    //<editor-fold desc="equals and hashcode" defaultstate="collapsed">
     @Override
-    public Long getId() {
-        return id;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Animale animale = (Animale) o;
+        return id.equals(animale.id);
     }
 
     @Override
-    public String toString() {
-        return "Animale{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", dataDiNascita=" + dataDiNascita +
-                ", patologie=" + patologie +
-                ", razza='" + razza + '\'' +
-                ", peso=" + peso +
-                ", peloLungo=" + peloLungo +
-                '}';
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    //</editor-fold>
+    public void addEventoAllaStoria(EventoPersonalizzato eventoPersonalizzato) {
+        storia.add(eventoPersonalizzato);
     }
 }
