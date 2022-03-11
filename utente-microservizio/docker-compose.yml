@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  dbpostgresql:
+    container_name: postgres
+    image: "postgres"
+    ports:
+      - "5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: utente
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 50
+    ports:
+      - "5050:50"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "dbpostgresql:pgsql-server"
+    depends_on:
+      - dbpostgresql
+    logging:
+      driver: none
+
+  app:
+    build: .
+    image: utente
+    container_name: utente
+    volumes:
+      - utente-data:/var/lib/utente
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbpostgresql
+      - pgadmin
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/utente
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - RABBIT_DATASOURCE_USERNAME=guest
+      - RABBIT_DATASOURCE_PASSWORD=guest
+      - RABBIT_DATASOURCE_HOST=localhost
+      - RABBIT_DATASOURCE_PORT=5672
+volumes:
+  db-data:
+  pgadmin-data:
+  utente-data:

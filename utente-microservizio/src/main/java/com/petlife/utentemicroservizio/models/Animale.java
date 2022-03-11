@@ -20,15 +20,18 @@ public class Animale implements Evento, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name="nome")
+    @Column(name="nome", nullable = false)
     private String nome;
     @Column(name = "dataNascita")
     private Date dataDiNascita;
     @ElementCollection(fetch=FetchType.EAGER)
     @CollectionTable(name = "patologie")
     private List<String> patologie;
+    @Column(name = "razza")
     private String razza;
+    @Column(name = "peso")
     private Float peso;
+    @Column(name = "peloLungo")
     private boolean peloLungo; //0 se corto
 
 
