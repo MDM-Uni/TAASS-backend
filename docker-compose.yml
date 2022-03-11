@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  dbpostgresql_ospedale:
+    container_name: postgres_ospedale
+    image: "postgres"
+    ports:
+      - "5431:5432"
+    volumes:
+      - ospedale-db-data
+    environment:
+      POSTGRES_DB: ospedale
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+
+  microservizio_ospedale:
+    build: ospedale-microservizio
+    image: ospedale
+    container_name: ospedale
+    volumes:
+      - ospedale-data:/var/lib/ospedale
+    ports:
+      - "8081:8080"
+    depends_on:
+      - dbpostgresql_ospedale
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/ospedale
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  dbpostgresql_negozio:
+    container_name: postgres_negozio
+    image: "postgres"
+    ports:
+      - "5430:5432"
+    volumes:
+      - negozio-db-data
+    environment:
+      POSTGRES_DB: negozio
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+
+  microservizio_negozio:
+    build: negozio-microservizio
+    image: negozio
+    container_name: negozio
+    volumes:
+      - negozio-data:/var/lib/negozio
+    ports:
+      - "8082:8080"
+    depends_on:
+      - dbpostgresql_negozio
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/negozio
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+volumes:
+  ospedale-db-data:
+  ospedale-data:
+  negozio-db-data:
+  negozio-data:
