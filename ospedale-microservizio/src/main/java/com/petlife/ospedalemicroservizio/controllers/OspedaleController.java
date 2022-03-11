@@ -110,18 +110,19 @@ public class OspedaleController {
     }
 
     @PostMapping("/pushVisita")
-    public ResponseEntity<String> createVisita(@RequestBody Visita visita) {
+    public ResponseEntity<Void> createVisita(@RequestBody Visita visita) {
         try {
+            logger.info("pushVisita chiamata");
             loadOspedale();
             OspedaleController.ospedale.getVisite().add(visita);
             visitaRepository.save(visita);
             ospedaleRepository.save(OspedaleController.ospedale);
             logger.info("Visita creata");
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         }
         catch (NoSuchElementException e) {
             logger.info("Errore in creazione visita");
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
