@@ -12,7 +12,6 @@ import java.util.Objects;
 
 @Entity
 @ToString
-@RequiredArgsConstructor
 @Getter
 @Setter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -35,10 +34,6 @@ public class Animale implements Serializable {
     private boolean peloLungo; //0 se corto
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<EventoPersonalizzato> storia;
-
-    public Animale(String nome) {
-        this.nome = nome;
-    }
 
     //<editor-fold desc="equals and hashcode" defaultstate="collapsed">
     @Override

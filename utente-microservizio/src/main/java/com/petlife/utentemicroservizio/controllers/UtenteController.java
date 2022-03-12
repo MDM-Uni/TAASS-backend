@@ -79,7 +79,9 @@ public class UtenteController {
 
     @RequestMapping(value="/aggiungiAnimale/{nome}", method = RequestMethod.POST)
     public ResponseEntity<Animale> addAnimal(@PathVariable("nome") String nome) {
-        return new ResponseEntity<Animale>(animaleRepository.save(new Animale(nome)),HttpStatus.OK);
+        Animale animale = new Animale();
+        animale.setNome(nome);
+        return new ResponseEntity<Animale>(animaleRepository.save(animale),HttpStatus.OK);
     }
 
     @RequestMapping(value = "/removeAnimal/{id}/{idA}" , method = RequestMethod.DELETE)
