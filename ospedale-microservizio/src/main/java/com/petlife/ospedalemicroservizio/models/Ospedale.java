@@ -22,7 +22,7 @@ public class Ospedale {
    private String nome;
    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
    private List<Visita> visite = new ArrayList<>();
-   @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+   @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
    private Indirizzo indirizzo;
 
    //getters

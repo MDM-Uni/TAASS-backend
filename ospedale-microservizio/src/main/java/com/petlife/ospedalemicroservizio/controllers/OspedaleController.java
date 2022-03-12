@@ -76,7 +76,8 @@ public class OspedaleController {
             logger.info("createOspedale eseguita con successo");
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Errore nella creazione dell'ospedale");
+            logger.info("Errore nella creazione dell'ospedale");
+            logger.info(e.getStackTrace().toString());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -110,15 +111,16 @@ public class OspedaleController {
     }
 
     @PostMapping("/pushVisita")
-    public ResponseEntity<Void> createVisita(@RequestBody Visita visita) {
+    public ResponseEntity<Long> createVisita(@RequestBody Visita visita) {
         try {
             logger.info("pushVisita chiamata");
             loadOspedale();
             OspedaleController.ospedale.getVisite().add(visita);
-            visitaRepository.save(visita);
+            Long idVisita = visitaRepository.save(visita).getId();
+            logger.info("ID visita: " + idVisita);
             ospedaleRepository.save(OspedaleController.ospedale);
             logger.info("Visita creata");
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(idVisita);
         }
         catch (NoSuchElementException e) {
             logger.info("Errore in creazione visita");
