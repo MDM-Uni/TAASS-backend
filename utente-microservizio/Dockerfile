@@ -1,5 +1,5 @@
-FROM openjdk:13-alpine
-RUN addgroup -S spring && adduser -S spring -G spring
+FROM adoptopenjdk/openjdk11
+# RUN addgroup -S spring && adduser -S spring -G spring
 EXPOSE 8080
 ARG DEPENDENCY=target
 ADD ${DEPENDENCY}/*.jar utente.jar
