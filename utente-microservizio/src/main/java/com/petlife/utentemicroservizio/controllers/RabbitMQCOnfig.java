@@ -14,19 +14,12 @@ import javax.script.Bindings;
 public class RabbitMQCOnfig {
 
     public static final String QUEUE_A = "codaAnimali";
-    public static final String QUEUE_B = "codaUtenti";
     public static final String EXCHANGE = "exchange";
     public static final String ROUTINGKEY_A = "AroutingKey";
-    public static final String ROUTINGKEY_B = "BroutingKey";
 
     @Bean
     public Queue queue_A(){
         return new Queue(QUEUE_A,false);
-    }
-
-    @Bean
-    public Queue queue_B(){
-        return new Queue(QUEUE_B,false);
     }
 
     @Bean
@@ -37,11 +30,6 @@ public class RabbitMQCOnfig {
     @Bean
     public Binding binding_A(Queue queue_A, TopicExchange exchange){
         return BindingBuilder.bind(queue_A).to(exchange).with(ROUTINGKEY_A);
-    }
-
-    @Bean
-    public Binding binding_B(Queue queue_B, TopicExchange exchange){
-        return BindingBuilder.bind(queue_B).to(exchange).with(ROUTINGKEY_B);
     }
 
     @Bean

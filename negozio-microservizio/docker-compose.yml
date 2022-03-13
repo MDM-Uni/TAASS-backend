@@ -9,7 +9,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: utente
+      POSTGRES_DB: negozio
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_PASSWORD: root
       PGADMIN_LISTEN_PORT: 50
     ports:
       - "5050:50"
@@ -30,30 +30,24 @@ services:
       - "dbpostgresql:pgsql-server"
     depends_on:
       - dbpostgresql
-    logging:
-      driver: none
 
   app:
     build: .
-    image: utente
-    container_name: utente
+    image: negozio
+    container_name: negozio
     volumes:
-      - utente-data:/var/lib/utente
+      - negozio-data:/var/lib/negozio
     ports:
       - "8080:8080"
     depends_on:
       - dbpostgresql
       - pgadmin
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/utente
-      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/negozio
+      - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - RABBIT_DATASOURCE_USERNAME=guest
-      - RABBIT_DATASOURCE_PASSWORD=guest
-      - RABBIT_DATASOURCE_HOST=localhost
-      - RABBIT_DATASOURCE_PORT=5672
 volumes:
   db-data:
   pgadmin-data:
-  utente-data:
+  negozio-data:

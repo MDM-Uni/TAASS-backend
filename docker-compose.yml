@@ -1,23 +1,59 @@
 version: '3'
 
 services:
+  ######################### utente #########################
+  dbpostgresql_utente:
+    container_name: postgres_utente
+    image: "postgres"
+    ports:
+      - "5433:5432"
+    volumes:
+      - utente-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: utente
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+
+  app_utente:
+    build: utente-microservizio
+    image: utente
+    container_name: microservizio_utente
+    volumes:
+      - utente-data:/var/lib/utente
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbpostgresql_utente
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql_utente:5432/utente
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+      - RABBIT_DATASOURCE_USERNAME=guest
+      - RABBIT_DATASOURCE_PASSWORD=guest
+      - RABBIT_DATASOURCE_HOST=localhost
+      - RABBIT_DATASOURCE_PORT=5672
+
+  ######################### ospedale #########################
   dbpostgresql_ospedale:
     container_name: postgres_ospedale
     image: "postgres"
     ports:
-      - "5431:5432"
+      - "5434:5432"
     volumes:
-      - ospedale-db-data
+      - ospedale-db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ospedale
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
 
-  microservizio_ospedale:
+  app_ospedale:
     build: ospedale-microservizio
     image: ospedale
-    container_name: ospedale
+    container_name: microservizio_ospedale
     volumes:
       - ospedale-data:/var/lib/ospedale
     ports:
@@ -25,28 +61,34 @@ services:
     depends_on:
       - dbpostgresql_ospedale
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/ospedale
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql_ospedale:5432/ospedale
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
+      - RABBIT_DATASOURCE_USERNAME=guest
+      - RABBIT_DATASOURCE_PASSWORD=guest
+      - RABBIT_DATASOURCE_HOST=localhost
+      - RABBIT_DATASOURCE_PORT=5672
+
+  ######################### negozio #########################
   dbpostgresql_negozio:
     container_name: postgres_negozio
     image: "postgres"
     ports:
-      - "5430:5432"
+      - "5435:5432"
     volumes:
-      - negozio-db-data
+      - negozio-db-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: negozio
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
 
-  microservizio_negozio:
+  app_negozio:
     build: negozio-microservizio
     image: negozio
-    container_name: negozio
+    container_name: microservizio_negozio
     volumes:
       - negozio-data:/var/lib/negozio
     ports:
@@ -54,12 +96,41 @@ services:
     depends_on:
       - dbpostgresql_negozio
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/negozio
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql_negozio:5432/negozio
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  ######################### pgadmin #########################
+  pgadmin:
+    container_name: pgadmin4_container_master
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 50
+    ports:
+      - "5050:50"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "dbpostgresql_negozio:pgsql-server"
+      - "dbpostgresql_utente:pgsql-server"
+      - "dbpostgresql_ospedale:pgsql-server"
+    depends_on:
+      - dbpostgresql_negozio
+      - dbpostgresql_utente
+      - dbpostgresql_ospedale
+    logging:
+      driver: none
+
+######################### volumi #########################
 volumes:
-  ospedale-db-data:
-  ospedale-data:
   negozio-db-data:
   negozio-data:
+  utente-db-data:
+  utente-data:
+  ospedale-db-data:
+  ospedale-data:
+  pgadmin-data:
