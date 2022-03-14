@@ -1,12 +1,16 @@
 package com.petlife.utentemicroservizio.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import org.hibernate.annotations.Type;
+import org.springframework.data.jpa.repository.Temporal;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -21,7 +25,7 @@ public class EventoPersonalizzato implements Evento {
    @GeneratedValue(strategy = GenerationType.AUTO)
    private Long id;
    private String testo;
-   private LocalDateTime data = LocalDateTime.now();
+   private Date data;
    @Lob
    @JsonIgnore
    @Type(type="org.hibernate.type.ImageType")
