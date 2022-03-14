@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @ToString
@@ -28,7 +29,7 @@ public class Animale implements Serializable {
     private Date dataDiNascita;
     @ElementCollection(fetch=FetchType.EAGER)
     @CollectionTable(name = "patologie")
-    private List<String> patologie;
+    private Set<String> patologie;
     @Column(name = "razza")
     private String razza;
     @Column(name = "peso")

@@ -90,7 +90,7 @@ public class UtenteController {
                 _animale.setDataDiNascita(animale.getDataDiNascita());
                 _animale.setPatologie(animale.getPatologie());
                 _animale.setPeso(animale.getPeso());
-                _animale.setPeloLungo(animale.getPeloLungo());
+                _animale.setPeloLungo(animale.isPeloLungo());
                 _animale.setRazza(animale.getRazza());
                 return new ResponseEntity<>(animaleRepository.save(_animale),HttpStatus.OK);
             }
