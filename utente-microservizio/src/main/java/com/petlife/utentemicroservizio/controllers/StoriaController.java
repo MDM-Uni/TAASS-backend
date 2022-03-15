@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,14 +86,15 @@ public class StoriaController {
       }
    }
 
-   @GetMapping(value="/getImmagineEventoPersonalizzato/{idEvento}")
+   @ResponseBody
+   @GetMapping(value="/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
    public ResponseEntity<byte[]> getImmagineEventoPersonalizzato(@PathVariable("idEvento") long idEvento) {
       logger.info("chiamo getImmagineEventoPersonalizzato");
       Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEvento);
 
       if (eventoPersonalizzato.isPresent()) {
          logger.info("immagine restituita");
-         return ResponseEntity.ok(eventoPersonalizzato.get().getImmagine());
+         return ResponseEntity.ok().body(eventoPersonalizzato.get().getImmagine());
       } else {
          logger.info("eventoPersonalizzato non trovato");
          return ResponseEntity.internalServerError().build();
