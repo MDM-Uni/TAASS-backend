@@ -30,6 +30,7 @@ public class EventoPersonalizzato implements Evento {
    @JsonIgnore
    @Type(type="org.hibernate.type.ImageType")
    private byte[] immagine;
+   private Long idAnimale;
 
    //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
    @Override

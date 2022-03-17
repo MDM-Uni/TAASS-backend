@@ -33,20 +33,28 @@ public class StoriaController {
 
    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   @GetMapping("/getStoria/{idAnimale}")
-   public ResponseEntity<List<Evento>> getStoria(@PathVariable("idAnimale") long idAnimale) {
+   @GetMapping(value = {"/getStoria","/getStoria/{idAnimale}"})
+   public ResponseEntity<List<EventoPersonalizzato>> getStoria(@PathVariable("idAnimale") Optional<Long> idAnimale) {
       logger.info("chiamo getStoria");
-      Optional<Animale> animale = animaleRepository.findById(idAnimale);
-
-      if (animale.isPresent()) {
-         List<EventoPersonalizzato> eventiPersonalizzati = animale.get().getStoria();
-         List<Evento> eventi = new ArrayList<>(eventiPersonalizzati);
-         logger.info("Storia restituita");
-         return ResponseEntity.ok(eventi);
-      } else {
+      List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
+      if (idAnimale.isPresent()) {
+         logger.info("chiamo getStoria specificando idAnimale");
+         Optional<Animale> animale = animaleRepository.findById(idAnimale.get());
+         if (animale.isPresent()) {
+            eventiPersonalizzati = animale.get().getStoria();
+         } else {
          logger.info("animale non trovato");
          return ResponseEntity.internalServerError().build();
       }
+      } else {
+         logger.info("chiamo getStoria senza idAnimale");
+         eventiPersonalizzati = new ArrayList<>();
+         for (Animale animale : animaleRepository.findAll()) {
+            eventiPersonalizzati.addAll(animale.getStoria());
+         }
+      }
+      logger.info("eventi personalizzati restituiti");
+      return ResponseEntity.ok(eventiPersonalizzati);
    }
 
    @PostMapping(value ="/pushEventoPersonalizzato/{idAnimale}", consumes = { "multipart/form-data" })
@@ -69,6 +77,7 @@ public class StoriaController {
          EventoPersonalizzato eventoPersonalizzato = new EventoPersonalizzato();
          eventoPersonalizzato.setTesto(testo);
          eventoPersonalizzato.setData(data);
+         eventoPersonalizzato.setIdAnimale(idAnimale);
          if (immagine != null) {
             eventoPersonalizzato.setImmagine(immagine.getBytes());
          } else logger.info("immagine nulla");
