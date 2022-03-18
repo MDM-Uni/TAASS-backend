@@ -43,15 +43,15 @@ public class UtenteController {
         return users;
     }
 
-    @GetMapping("/animals")
-    public ResponseEntity<List<Animale>> getAnimalsUser(HttpSession session) {
-        Optional<Utente> user = utenteRepository.findById((Long) session.getAttribute("id"));
+    @GetMapping("/animals/{id}")
+    public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
+        Optional<Utente> user = utenteRepository.findById(id);
         return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @RequestMapping(value="/addAnimal", method = RequestMethod.POST)
-    public ResponseEntity<Utente> addAnimal(HttpSession session, @RequestBody Animale animale) {
-        Optional<Utente> user = utenteRepository.findById((Long) session.getAttribute("id"));
+    @RequestMapping(value="/addAnimal/{id}", method = RequestMethod.POST)
+    public ResponseEntity<Utente> addAnimal(@PathVariable("id") long id, @RequestBody Animale animale) {
+        Optional<Utente> user = utenteRepository.findById(id);
         if (user.isPresent()) {
             Utente _utente = user.get();
             _utente.addAnimale(animale);
@@ -62,9 +62,9 @@ public class UtenteController {
         }
     }
 
-    @RequestMapping(value = "/removeAnimal/{idA}" , method = RequestMethod.DELETE)
-    public ResponseEntity<String> removeAnimal(HttpSession session, @PathVariable("idA") long idA) {
-        Optional<Utente> user = utenteRepository.findById((Long) session.getAttribute("id"));
+    @RequestMapping(value = "/removeAnimal/{id}/{idA}" , method = RequestMethod.DELETE)
+    public ResponseEntity<String> removeAnimal(@PathVariable("id") long id, @PathVariable("idA") long idA) {
+        Optional<Utente> user = utenteRepository.findById(id);
         Optional<Animale> animal = animaleRepository.findById(idA);
         if (user.isPresent() && animal.isPresent()) {
             Utente _utente = user.get();
@@ -78,9 +78,9 @@ public class UtenteController {
         }
     }
 
-    @RequestMapping(value = "/updateAnimal/{idA}" , method = RequestMethod.PUT)
-    public ResponseEntity<Animale> updateAnimal(HttpSession session, @PathVariable("idA") Long idA, @RequestBody Animale animale) {
-        Optional<Utente> user = utenteRepository.findById((Long) session.getAttribute("id"));
+    @RequestMapping(value = "/updateAnimal/{id}/{idA}" , method = RequestMethod.PUT)
+    public ResponseEntity<Animale> updateAnimal(@PathVariable("id") long id, @PathVariable("idA") Long idA, @RequestBody Animale animale) {
+        Optional<Utente> user = utenteRepository.findById(id);
         Optional<Animale> animal = animaleRepository.findById(idA);
         if (user.isPresent() && animal.isPresent()) {
             Utente _utente = user.get();
@@ -99,16 +99,14 @@ public class UtenteController {
     }
 
     @GetMapping(value = "user/{email}/{nome}")
-    public Utente getUser(HttpSession session, @PathVariable String email, @PathVariable String nome) {
+    public Utente getUser(@PathVariable String email, @PathVariable String nome) {
         Optional<Utente> user = utenteRepository.findByEmail(email);
         List<Animale> animali = new ArrayList<Animale>();
         if(user.isPresent()) {
             Utente utente = user.get();
-            session.setAttribute("id",utente.getId());
             return utente;
         } else {
             Utente utente = utenteRepository.save(new Utente(nome, email, animali));
-            session.setAttribute("id",utente.getId());
             return utente;
         }
     }
