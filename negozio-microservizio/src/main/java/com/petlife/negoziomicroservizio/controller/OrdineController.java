@@ -63,8 +63,7 @@ public class OrdineController {
 
         carrello.svuota();
         carrelloRepository.save(carrello);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(ordine);
     }
 
     @PostMapping("/annulla")
@@ -82,7 +81,6 @@ public class OrdineController {
         utenteRepository.save(utente);
 
         ordineRepository.delete(ordine);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(ordine);
     }
 }

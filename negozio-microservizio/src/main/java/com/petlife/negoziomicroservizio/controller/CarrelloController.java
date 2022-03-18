@@ -44,7 +44,7 @@ public class CarrelloController {
     }
 
     @PostMapping("/{idCarrello}/aggiungi")
-    public ResponseEntity<String> aggiungiProdotto(
+    public ResponseEntity<?> aggiungiProdotto(
             @PathVariable long idCarrello,
             @RequestParam long idProdotto,
             @RequestParam int quantita) {
@@ -63,11 +63,11 @@ public class CarrelloController {
 
         carrello.aggiungiProdotto(prodotto, quantita);
         carrelloRepository.save(carrello);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(carrello);
     }
 
     @PostMapping("/{idCarrello}/rimuovi")
-    public ResponseEntity<String> rimuoviProdotto(
+    public ResponseEntity<?> rimuoviProdotto(
             @PathVariable long idCarrello,
             @RequestParam long idProdotto,
             @RequestParam int quantita) {
@@ -88,6 +88,6 @@ public class CarrelloController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La quantità deve essere >= 0 (ora " + quantita + ")");
 
         carrelloRepository.save(carrello);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(carrello);
     }
 }

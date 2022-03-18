@@ -41,8 +41,7 @@ public class IndirizzoController {
 
         utente.aggiungiIndirizzo(indirizzo);
         utenteRepository.save(utente);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(indirizzo);
     }
 
     @PostMapping("/{id}/rimuovi")
@@ -61,6 +60,6 @@ public class IndirizzoController {
         utenteRepository.save(utente);
 
         indirizzoRepository.delete(indirizzo);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body(indirizzo);
     }
 }
