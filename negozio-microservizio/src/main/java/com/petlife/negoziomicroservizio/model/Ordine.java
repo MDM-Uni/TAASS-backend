@@ -3,10 +3,8 @@ package com.petlife.negoziomicroservizio.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -49,6 +47,12 @@ public class Ordine {
 
     public double getTotale() {
         return prodotti.entrySet().parallelStream().mapToDouble(e -> e.getKey().getPrezzo() * e.getValue()).sum();
+    }
+
+    public List<Map<String, Object>> getProdotti() {
+        return prodotti.entrySet().stream()
+                .map(e -> Map.of("prodotto", e.getKey(),"quantita", e.getValue()))
+                .collect(Collectors.toList());
     }
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
