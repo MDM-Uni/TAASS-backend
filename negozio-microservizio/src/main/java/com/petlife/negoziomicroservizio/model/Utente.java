@@ -43,6 +43,14 @@ public class Utente {
         ordini.remove(ordine);
     }
 
+    public void aggiungiIndirizzo(Indirizzo indirizzo) {
+        indirizzi.add(indirizzo);
+    }
+
+    public void rimuoviIndirizzo(Indirizzo indirizzo) {
+        indirizzi.remove(indirizzo);
+    }
+
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
     @Override
     public boolean equals(Object o) {
