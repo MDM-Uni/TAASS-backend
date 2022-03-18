@@ -16,7 +16,6 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 public class Negozio {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -26,12 +25,12 @@ public class Negozio {
     private String nome;
 
     @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "negozio_id")
+    @JoinTable(name = "negozio_prodotto", inverseJoinColumns = {@JoinColumn(name = "prodotto_id")})
     @ToString.Exclude
     private List<Prodotto> prodotti = new ArrayList<>();
 
     @OneToMany(orphanRemoval = true)
-    @JoinColumn(name = "negozio_id")
+    @JoinTable(name = "negozio_ordine", inverseJoinColumns = {@JoinColumn(name = "ordine_id")})
     @ToString.Exclude
     private List<Ordine> ordini = new ArrayList<>();
 

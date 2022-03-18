@@ -1,5 +1,6 @@
 package com.petlife.negoziomicroservizio.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class Carrello {
     private long id;
 
     @ElementCollection
-    @CollectionTable(name = "carrello_prodotto", joinColumns = @JoinColumn(name = "carrello_id"))
+    @CollectionTable(name = "carrello_prodotto")
     @Column(name = "quantita")
     @MapKeyJoinColumn(name = "prodotto_id")
     private Map<Prodotto, Integer> prodotti = new HashMap<>();
@@ -60,6 +61,15 @@ public class Carrello {
         return prodotti.entrySet().stream()
                 .map(e -> Map.of("prodotto", e.getKey(),"quantita", e.getValue()))
                 .collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public Map<Prodotto, Integer> getProdottoQuantita() {
+        return prodotti;
+    }
+
+    public void svuota() {
+        prodotti.clear();
     }
 
     //<editor-fold desc="equals and hashCode" defaultstate="collapsed">
