@@ -95,6 +95,29 @@ public class StoriaController {
       }
    }
 
+   @PostMapping(value = "/deleteEventoPersonalizzato") // url: http://localhost:8081/storia/deleteEventoPersonalizzato
+   public ResponseEntity<Void> deleteEventoPersonalizzato(@RequestBody EventoPersonalizzato eventoPersonalizzato) {
+      logger.info("chiamo deleteEventoPersonalizzato");
+      Optional<EventoPersonalizzato> eventoDaEliminare = eventoPersonalizzatoRepository.findById(eventoPersonalizzato.getId());
+      if (eventoDaEliminare.isPresent()) {
+         Optional<Animale> animale = animaleRepository.findById(eventoDaEliminare.get().getIdAnimale());
+         if (animale.isPresent()) {
+            Animale animale_ = animale.get();
+            animale_.getStoria().remove(eventoPersonalizzato);
+            animaleRepository.save(animale_);
+            eventoPersonalizzatoRepository.delete(eventoPersonalizzato);
+            logger.info("eventoPersonalizzato eliminato");
+            return ResponseEntity.ok().build();
+         } else {
+            logger.info("animale non trovato");
+            return ResponseEntity.internalServerError().build();
+         }
+      } else {
+         logger.info("eventoPersonalizzato non trovato");
+         return ResponseEntity.notFound().build();
+      }
+   }
+
    @ResponseBody
    @GetMapping(value="/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
    public ResponseEntity<byte[]> getImmagineEventoPersonalizzato(@PathVariable("idEvento") long idEvento) {
@@ -102,8 +125,14 @@ public class StoriaController {
       Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEvento);
 
       if (eventoPersonalizzato.isPresent()) {
-         logger.info("immagine restituita");
-         return ResponseEntity.ok().body(eventoPersonalizzato.get().getImmagine());
+         if (eventoPersonalizzato.get().getImmagine() != null) {
+            logger.info("immagine restituita");
+            return ResponseEntity.ok(eventoPersonalizzato.get().getImmagine());
+         }
+         else {
+            logger.info("immagine non presente");
+            return ResponseEntity.notFound().build();
+         }
       } else {
          logger.info("eventoPersonalizzato non trovato");
          return ResponseEntity.internalServerError().build();
