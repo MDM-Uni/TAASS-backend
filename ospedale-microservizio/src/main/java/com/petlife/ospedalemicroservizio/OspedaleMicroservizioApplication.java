@@ -39,8 +39,6 @@ public class OspedaleMicroservizioApplication {
             ind.setNumeroCivico(7);
             ospedale.setIndirizzo(ind);
             ospedaleController.createOspedale(ospedale);
-
-            logger.info("Ospedale creato");
          }
          else logger.info("Ospedale già esistente");
       };
