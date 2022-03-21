@@ -4,6 +4,8 @@ import com.petlife.utentemicroservizio.models.Animale;
 import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.UtenteRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @SessionAttributes("id")
 @RestController
+@Slf4j
 public class UtenteController {
 
     @Autowired
@@ -71,7 +74,12 @@ public class UtenteController {
             _utente.removeAnimale(animal.get());
             animaleRepository.delete(animal.get());
             utenteRepository.save(_utente);
-            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_A,animal.get());
+            try {
+                rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE, RabbitMQCOnfig.ROUTINGKEY_A, animal.get().getId());
+            }
+            catch (AmqpException e) {
+                log.error("Errore nell'invio dell'id dell'animale eliminato nella coda");
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
