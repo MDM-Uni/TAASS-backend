@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/storia")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200")
 public class StoriaController {
    @Autowired
    private AnimaleRepository animaleRepository;
@@ -65,12 +65,12 @@ public class StoriaController {
          @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
          @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
          Date data,
-         @ModelAttribute MultipartFile immagine) throws IOException {
+         @ModelAttribute("immagine") Optional<MultipartFile> immagine) throws IOException {
       logger.info("chiamo postEventoPersonalizzato");
       logger.info("idAnimale: " + idAnimale + "\n" +
             "testo: " + testo + "\n" +
             "data: " + data + "\n" +
-            "immagine nulla: " + (immagine==null));
+            "immagine nulla: " + (immagine.isEmpty()));
       Optional<Animale> animale = animaleRepository.findById(idAnimale);
 
       if (animale.isPresent()) {
@@ -78,8 +78,8 @@ public class StoriaController {
          eventoPersonalizzato.setTesto(testo);
          eventoPersonalizzato.setData(data);
          eventoPersonalizzato.setIdAnimale(idAnimale);
-         if (immagine != null) {
-            eventoPersonalizzato.setImmagine(immagine.getBytes());
+         if (immagine.isPresent()) {
+            eventoPersonalizzato.setImmagine(immagine.get().getBytes());
          } else logger.info("immagine nulla");
          eventoPersonalizzatoRepository.save(eventoPersonalizzato);
 
