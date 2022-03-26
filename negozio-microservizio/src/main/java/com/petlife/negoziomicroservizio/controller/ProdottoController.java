@@ -23,14 +23,14 @@ public class ProdottoController {
     private ProdottoRepository repository;
 
     @GetMapping
-    public List<Prodotto> getAllProdotti() {
+    public ResponseEntity<?> getAllProdotti() {
         List<Prodotto> prodotti = new ArrayList<>();
         repository.findAll().forEach(prodotti::add);
-        return prodotti;
+        return ResponseEntity.ok().body(prodotti);
     }
 
     @PostMapping(value = "/crea", consumes = { "multipart/form-data" })
-    public void salvaProdotto(@RequestParam String nome,
+    public ResponseEntity<?> salvaProdotto(@RequestParam String nome,
                               @RequestParam double prezzo,
                               @RequestParam String categoria,
                               @ModelAttribute MultipartFile immagine) throws IOException {
@@ -40,6 +40,7 @@ public class ProdottoController {
         prodotto.setCategoria(categoria);
         prodotto.setImmagine(immagine.getBytes());
         repository.save(prodotto);
+        return ResponseEntity.ok().body(prodotto);
     }
 
     @GetMapping("/{id}")

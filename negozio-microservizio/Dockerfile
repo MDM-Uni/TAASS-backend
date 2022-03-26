@@ -1,6 +1,6 @@
 FROM adoptopenjdk/openjdk11
-# RUN addgroup -S spring && adduser -S spring -G spring
-EXPOSE 8080
+#RUN addgroup --system spring && adduser --system spring --group spring
+EXPOSE 8082
 ARG DEPENDENCY=target
 ADD ${DEPENDENCY}/*.jar negozio.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/negozio.jar"]
+ENTRYPOINT ["java","-jar","/negozio.jar"]
