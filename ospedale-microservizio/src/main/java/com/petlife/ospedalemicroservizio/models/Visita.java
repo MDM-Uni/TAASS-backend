@@ -66,6 +66,7 @@ public class Visita implements Evento{
       this.idAnimale = idAnimale;
    }
 
+   //<editor-fold desc="equals and hashcode" defaultstate="collapsed">
    @Override
    public boolean equals(Object o) {
       if (this == o) return true;
@@ -78,6 +79,7 @@ public class Visita implements Evento{
    public int hashCode() {
       return Objects.hash(id);
    }
+   //</editor-fold>
 
    @Override
    public LocalDateTime getData() {
