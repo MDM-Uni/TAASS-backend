@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -26,21 +27,21 @@ public class Utente {
     private Carrello carrello;
 
     @OneToMany(orphanRemoval = true)
-    @JoinTable(name = "utente_ordine", inverseJoinColumns = {@JoinColumn(name = "ordine_id")})
-    @ToString.Exclude
-    private List<Ordine> ordini = new ArrayList<>();
-
-    @OneToMany(orphanRemoval = true)
     @JoinTable(name = "utente_indirizzo", inverseJoinColumns = {@JoinColumn(name = "indirizzo_id")})
     @ToString.Exclude
     private List<Indirizzo> indirizzi = new ArrayList<>();
 
-    public void aggiungiOrdine(Ordine ordine) {
-        ordini.add(ordine);
+    @OneToMany(orphanRemoval = true)
+    @JoinTable(name = "utente_animale", inverseJoinColumns = {@JoinColumn(name = "animale_id")})
+    @ToString.Exclude
+    private List<Animale> animali = new ArrayList<>();
+
+    public boolean haAnimale(Animale animale) {
+        return animali.contains(animale);
     }
 
-    public void annullaOrdine(Ordine ordine) {
-        ordini.remove(ordine);
+    public List<Ordine> getOrdini() {
+        return animali.stream().flatMap(animale -> animale.getOrdini().stream()).collect(Collectors.toList());
     }
 
     public void aggiungiIndirizzo(Indirizzo indirizzo) {

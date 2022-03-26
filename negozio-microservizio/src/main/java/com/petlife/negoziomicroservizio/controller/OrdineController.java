@@ -1,13 +1,7 @@
 package com.petlife.negoziomicroservizio.controller;
 
-import com.petlife.negoziomicroservizio.model.Carrello;
-import com.petlife.negoziomicroservizio.model.Indirizzo;
-import com.petlife.negoziomicroservizio.model.Ordine;
-import com.petlife.negoziomicroservizio.model.Utente;
-import com.petlife.negoziomicroservizio.repo.CarrelloRepository;
-import com.petlife.negoziomicroservizio.repo.IndirizzoRepository;
-import com.petlife.negoziomicroservizio.repo.OrdineRepository;
-import com.petlife.negoziomicroservizio.repo.UtenteRepository;
+import com.petlife.negoziomicroservizio.model.*;
+import com.petlife.negoziomicroservizio.repo.*;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +23,8 @@ public class OrdineController {
     private OrdineRepository ordineRepository;
     @Autowired
     private IndirizzoRepository indirizzoRepository;
+    @Autowired
+    private AnimaleRepository animaleRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrdini(@PathVariable long id) {
@@ -40,8 +36,28 @@ public class OrdineController {
         return ResponseEntity.status(HttpStatus.OK).body(utente.getOrdini());
     }
 
+    @GetMapping("/{idUtente}/{idAnimale}")
+    public ResponseEntity<?> getOrdiniAnimale(@PathVariable long idUtente, @PathVariable long idAnimale) {
+        Optional<Utente> utenteOpt = utenteRepository.findById(idUtente);
+        if (utenteOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + idUtente + " non trovato");
+        Utente utente = utenteOpt.get();
+
+        Optional<Animale> animaleOpt = animaleRepository.findById(idAnimale);
+        if (animaleOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Animale id=" + idAnimale + " non trovato");
+        Animale animale = animaleOpt.get();
+
+        if (!utente.haAnimale(animale))
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("L'utente id=" + utente.getId() + " non ha l'animale id=" + idAnimale);
+
+        return ResponseEntity.status(HttpStatus.OK).body(animale.getOrdini());
+    }
+
     @PostMapping("/crea")
-    public ResponseEntity<?> creaOrdine(@RequestParam long idCarrello, @RequestParam long idIndirizzo) {
+    public ResponseEntity<?> creaOrdine(@RequestParam long idCarrello,
+                                        @RequestParam long idIndirizzo,
+                                        @RequestParam long idAnimale) {
         Optional<Carrello> carrelloOpt = carrelloRepository.findById(idCarrello);
         if (carrelloOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Carrello id=" + idCarrello + " non trovato");
@@ -55,11 +71,20 @@ public class OrdineController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Indirizzo id=" + idIndirizzo + " non trovato");
         Indirizzo indirizzoConsegna = indirizzoOpt.get();
 
-        Ordine ordine = ordineRepository.save(new Ordine(carrello.getProdottoQuantita(),indirizzoConsegna));
+        Optional<Animale> animaleOpt = animaleRepository.findById(idAnimale);
+        if (animaleOpt.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Animale id=" + idAnimale + " non trovato");
+        Animale animale = animaleOpt.get();
 
         Utente utente = utenteRepository.findByCarrelloId(idCarrello).orElseThrow();
-        utente.aggiungiOrdine(ordine);
-        utenteRepository.save(utente);
+
+        if (!utente.haAnimale(animale))
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("L'utente id=" + utente.getId() + " non ha l'animale id=" + idAnimale);
+
+        Ordine ordine = ordineRepository.save(new Ordine(carrello.getProdottoQuantita(),indirizzoConsegna));
+
+        animale.aggiungiOrdine(ordine);
+        animaleRepository.save(animale);
 
         carrello.svuota();
         carrelloRepository.save(carrello);
@@ -76,11 +101,11 @@ public class OrdineController {
         if (ordine.getDataConsegna() != null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ordine id=" + idOrdine + " già consegnato");
 
-        Utente utente = utenteRepository.findByOrdiniId(idOrdine).orElseThrow();
-        utente.annullaOrdine(ordine);
-        utenteRepository.save(utente);
+        Animale animale = animaleRepository.findByOrdiniId(idOrdine).orElseThrow();
+        animale.annullaOrdine(ordine);
+        animaleRepository.save(animale);
 
         ordineRepository.delete(ordine);
-        return ResponseEntity.status(HttpStatus.OK).body(ordine);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
