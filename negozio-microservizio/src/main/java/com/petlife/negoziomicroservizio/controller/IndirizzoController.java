@@ -60,6 +60,6 @@ public class IndirizzoController {
         utenteRepository.save(utente);
 
         indirizzoRepository.delete(indirizzo);
-        return ResponseEntity.status(HttpStatus.OK).body(indirizzo);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

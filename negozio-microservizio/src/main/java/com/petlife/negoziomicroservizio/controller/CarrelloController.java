@@ -88,6 +88,6 @@ public class CarrelloController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("La quantità deve essere >= 0 (ora " + quantita + ")");
 
         carrelloRepository.save(carrello);
-        return ResponseEntity.status(HttpStatus.OK).body(carrello);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
