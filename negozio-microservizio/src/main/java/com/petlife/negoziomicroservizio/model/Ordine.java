@@ -42,7 +42,7 @@ public class Ordine {
     }
 
     public int getNumeroArticoli() {
-        return prodotti.size();
+        return prodotti.values().parallelStream().mapToInt(e -> e).sum();
     }
 
     public double getTotale() {
