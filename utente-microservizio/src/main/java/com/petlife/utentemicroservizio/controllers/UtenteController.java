@@ -4,6 +4,7 @@ import com.petlife.utentemicroservizio.models.Animale;
 import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.UtenteRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @SessionAttributes("id")
 @RestController
+@Slf4j
 public class UtenteController {
 
     @Autowired
@@ -45,8 +47,11 @@ public class UtenteController {
 
     @GetMapping("/animals/{id}")
     public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
+        log.info("chiamo getAnimalsUser");
         Optional<Utente> user = utenteRepository.findById(id);
-        return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        log.info("animali: " + user.get().getAnimali());
+        return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK))
+              .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @RequestMapping(value="/addAnimal/{id}", method = RequestMethod.POST)
