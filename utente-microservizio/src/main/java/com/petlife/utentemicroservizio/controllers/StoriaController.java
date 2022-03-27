@@ -31,7 +31,7 @@ public class StoriaController {
 
    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   @GetMapping(value = {"/getStoria","/getStoria/{idEventoPers}"})
+   @GetMapping(value = {"/getStoria", "/getStoria/{idEventoPers}"})
    public ResponseEntity<List<EventoPersonalizzato>> getStoria(
          @PathVariable("idEventoPers") Optional<Long> idEventoPers,
          @RequestParam("idAnimale") Optional<Long> idAnimale) {
@@ -43,9 +43,9 @@ public class StoriaController {
          if (animale.isPresent()) {
             eventiPersonalizzati = animale.get().getStoria();
          } else {
-         logger.info("animale non trovato");
-         return ResponseEntity.internalServerError().build();
-      }
+            logger.info("animale non trovato");
+            return ResponseEntity.internalServerError().build();
+         }
       } else {
          logger.info("chiamo getStoria senza idAnimale");
          eventiPersonalizzati = new ArrayList<>();
@@ -67,14 +67,14 @@ public class StoriaController {
       return ResponseEntity.ok(eventiPersonalizzati);
    }
 
-   @PostMapping(value ="/pushEventoPersonalizzato/{idAnimale}", consumes = { "multipart/form-data" })
+   @PostMapping(value = "/pushEventoPersonalizzato/{idAnimale}", consumes = {"multipart/form-data"})
    public ResponseEntity<Long> postEventoPersonalizzato(
          @PathVariable("idAnimale") long idAnimale,
          @RequestParam("testo") String testo,
          @RequestParam("data")
          @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
          @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
-         Date data,
+               Date data,
          @ModelAttribute("immagine") Optional<MultipartFile> immagine) throws IOException {
       logger.info("chiamo postEventoPersonalizzato");
       logger.info("idAnimale: " + idAnimale + "\n" +
@@ -129,7 +129,7 @@ public class StoriaController {
    }
 
    @ResponseBody
-   @GetMapping(value="/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
+   @GetMapping(value = "/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
    public ResponseEntity<byte[]> getImmagineEventoPersonalizzato(@PathVariable("idEvento") long idEvento) {
       logger.info("chiamo getImmagineEventoPersonalizzato");
       Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEvento);
@@ -138,8 +138,7 @@ public class StoriaController {
          if (eventoPersonalizzato.get().getImmagine() != null) {
             logger.info("immagine restituita");
             return ResponseEntity.ok(eventoPersonalizzato.get().getImmagine());
-         }
-         else {
+         } else {
             logger.info("immagine non presente");
             return ResponseEntity.notFound().build();
          }
