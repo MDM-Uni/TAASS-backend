@@ -2,7 +2,6 @@ package com.petlife.utentemicroservizio.controllers;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.petlife.utentemicroservizio.models.Animale;
-import com.petlife.utentemicroservizio.models.Evento;
 import com.petlife.utentemicroservizio.models.EventoPersonalizzato;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.EventoPersonalizzatoRepository;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,8 +31,10 @@ public class StoriaController {
 
    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   @GetMapping(value = {"/getStoria","/getStoria/{idAnimale}"})
-   public ResponseEntity<List<EventoPersonalizzato>> getStoria(@PathVariable("idAnimale") Optional<Long> idAnimale) {
+   @GetMapping(value = {"/getStoria","/getStoria/{idEventoPers}"})
+   public ResponseEntity<List<EventoPersonalizzato>> getStoria(
+         @PathVariable("idEventoPers") Optional<Long> idEventoPers,
+         @RequestParam("idAnimale") Optional<Long> idAnimale) {
       logger.info("chiamo getStoria");
       List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
       if (idAnimale.isPresent()) {
@@ -51,6 +51,16 @@ public class StoriaController {
          eventiPersonalizzati = new ArrayList<>();
          for (Animale animale : animaleRepository.findAll()) {
             eventiPersonalizzati.addAll(animale.getStoria());
+         }
+      }
+      if (idEventoPers.isPresent()) {
+         logger.info("chiamo getStoria specificando idEventoPers");
+         Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEventoPers.get());
+         if (eventoPersonalizzato.isPresent()) {
+            eventiPersonalizzati.add(eventoPersonalizzato.get());
+         } else {
+            logger.info("eventoPersonalizzato non trovato");
+            return ResponseEntity.notFound().build();
          }
       }
       logger.info("eventi personalizzati restituiti");
