@@ -5,6 +5,8 @@ import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.UtenteRepository;
 import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,9 +51,7 @@ public class UtenteController {
     public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
         log.info("chiamo getAnimalsUser");
         Optional<Utente> user = utenteRepository.findById(id);
-        log.info("animali: " + user.get().getAnimali());
-        return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK))
-              .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @RequestMapping(value="/addAnimal/{id}", method = RequestMethod.POST)
@@ -76,7 +76,12 @@ public class UtenteController {
             _utente.removeAnimale(animal.get());
             animaleRepository.delete(animal.get());
             utenteRepository.save(_utente);
-            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_A,animal.get());
+            try {
+                rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE, RabbitMQCOnfig.ROUTINGKEY_A, animal.get().getId());
+            }
+            catch (AmqpException e) {
+                log.error("Errore nell'invio dell'id dell'animale eliminato nella coda");
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

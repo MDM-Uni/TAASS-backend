@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ospedale
+    username: marco
+    password: marco
+  jpa:
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+
+    hibernate:
+      ddl-auto: update
+
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  rabbitmq:
+    queue: codaAnimali
+    exchange: exchange
+    routing-key: AroutingKey
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest

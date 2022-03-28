@@ -7,9 +7,13 @@ import com.petlife.ospedalemicroservizio.repositories.OspedaleRepository;
 import com.petlife.ospedalemicroservizio.repositories.VisitaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.RabbitListenerConfigurer;
+import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -40,7 +44,7 @@ public class OspedaleController {
         }
     }
 
-    private boolean loadOspedale() {
+    boolean loadOspedale() {
         List<Ospedale> ospedali = ospedaleRepository.findAll();
         try {
             OspedaleController.ospedale = ospedali.get(0);
@@ -143,4 +147,6 @@ public class OspedaleController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
