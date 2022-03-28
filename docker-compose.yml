@@ -43,10 +43,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-#      - RABBIT_DATASOURCE_USERNAME=guest
-#      - RABBIT_DATASOURCE_PASSWORD=guest
-#      - RABBIT_DATASOURCE_HOST=rabbitmq
-#      - RABBIT_DATASOURCE_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
 
   ######################### ospedale #########################
   dbpostgresql_ospedale:
@@ -79,10 +79,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-#      - RABBIT_DATASOURCE_USERNAME=guest
-#      - RABBIT_DATASOURCE_PASSWORD=guest
-#      - RABBIT_DATASOURCE_HOST=rabbitmq
-#      - RABBIT_DATASOURCE_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
 
   ######################### negozio #########################
   dbpostgresql_negozio:

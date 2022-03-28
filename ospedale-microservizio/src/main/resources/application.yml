@@ -17,7 +17,7 @@ spring:
     queue: codaAnimali
     exchange: exchange
     routing-key: AroutingKey
-    host: rabbitmq
+    host: localhost
     port: 5672
     username: guest
     password: guest
