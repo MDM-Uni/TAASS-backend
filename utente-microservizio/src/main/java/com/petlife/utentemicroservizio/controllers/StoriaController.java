@@ -31,10 +31,9 @@ public class StoriaController {
 
    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   @GetMapping(value = {"/getStoria", "/getStoria/{idEventoPers}"})
+   @GetMapping(value = {"/getStoria", "/getStoria/{idAnimale}"})
    public ResponseEntity<List<EventoPersonalizzato>> getStoria(
-         @PathVariable("idEventoPers") Optional<Long> idEventoPers,
-         @RequestParam("idAnimale") Optional<Long> idAnimale) {
+         @PathVariable("idAnimale") Optional<Long> idAnimale) {
       logger.info("chiamo getStoria");
       List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
       if (idAnimale.isPresent()) {
@@ -51,16 +50,6 @@ public class StoriaController {
          eventiPersonalizzati = new ArrayList<>();
          for (Animale animale : animaleRepository.findAll()) {
             eventiPersonalizzati.addAll(animale.getStoria());
-         }
-      }
-      if (idEventoPers.isPresent()) {
-         logger.info("chiamo getStoria specificando idEventoPers");
-         Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEventoPers.get());
-         if (eventoPersonalizzato.isPresent()) {
-            eventiPersonalizzati.add(eventoPersonalizzato.get());
-         } else {
-            logger.info("eventoPersonalizzato non trovato");
-            return ResponseEntity.notFound().build();
          }
       }
       logger.info("eventi personalizzati restituiti");
