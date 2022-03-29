@@ -1,9 +1,6 @@
 package com.petlife.negoziomicroservizio.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.List;
 @Table(name = "animale")
 public class Animale {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private long id;
 
@@ -25,6 +21,10 @@ public class Animale {
     @JoinTable(name = "animale_ordine", inverseJoinColumns = {@JoinColumn(name = "ordine_id")})
     @ToString.Exclude
     private List<Ordine> ordini = new ArrayList<>();
+
+    public Animale(long id) {
+        this.id = id;
+    }
 
     public void aggiungiOrdine(Ordine ordine) {
         ordini.add(ordine);

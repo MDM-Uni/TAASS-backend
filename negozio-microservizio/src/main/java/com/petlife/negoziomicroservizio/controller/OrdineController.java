@@ -73,13 +73,15 @@ public class OrdineController {
 
         Optional<Animale> animaleOpt = animaleRepository.findById(idAnimale);
         if (animaleOpt.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Animale id=" + idAnimale + " non trovato");
+            animaleOpt = Optional.of(animaleRepository.save(new Animale(idAnimale))); // aggiungi nuovo animale
         Animale animale = animaleOpt.get();
 
         Utente utente = utenteRepository.findByCarrelloId(idCarrello).orElseThrow();
 
-        if (!utente.haAnimale(animale))
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("L'utente id=" + utente.getId() + " non ha l'animale id=" + idAnimale);
+        if (!utente.haAnimale(animale)) { // aggiungi animale all'utente
+            utente.aggiungiAnimale(animale);
+            utenteRepository.save(utente);
+        }
 
         Ordine ordine = ordineRepository.save(new Ordine(carrello.getProdottoQuantita(),indirizzoConsegna));
 

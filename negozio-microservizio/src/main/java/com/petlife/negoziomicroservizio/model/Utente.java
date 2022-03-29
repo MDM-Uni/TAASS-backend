@@ -8,6 +8,7 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,8 +41,15 @@ public class Utente {
         return animali.contains(animale);
     }
 
-    public List<Ordine> getOrdini() {
-        return animali.stream().flatMap(animale -> animale.getOrdini().stream()).collect(Collectors.toList());
+    public void aggiungiAnimale(Animale animale) {
+        this.animali.add(animale);
+    }
+
+    public List<Map<String,Object>> getOrdini() {
+        return animali.stream()
+                .flatMap(animale -> animale.getOrdini().stream()
+                        .map(ordine -> Map.of("animale", animale, "ordine", ordine)))
+                .collect(Collectors.toList());
     }
 
     public void aggiungiIndirizzo(Indirizzo indirizzo) {
