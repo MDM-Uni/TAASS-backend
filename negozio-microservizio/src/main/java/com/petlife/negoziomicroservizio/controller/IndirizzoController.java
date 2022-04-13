@@ -3,6 +3,7 @@ package com.petlife.negoziomicroservizio.controller;
 import com.petlife.negoziomicroservizio.model.Indirizzo;
 import com.petlife.negoziomicroservizio.model.Utente;
 import com.petlife.negoziomicroservizio.repo.IndirizzoRepository;
+import com.petlife.negoziomicroservizio.repo.OrdineRepository;
 import com.petlife.negoziomicroservizio.repo.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ public class IndirizzoController {
     private IndirizzoRepository indirizzoRepository;
     @Autowired
     private UtenteRepository utenteRepository;
+    @Autowired
+    private OrdineRepository ordineRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getIndirizzi(@PathVariable long id) {
@@ -59,7 +62,9 @@ public class IndirizzoController {
         utente.rimuoviIndirizzo(indirizzo);
         utenteRepository.save(utente);
 
-        indirizzoRepository.delete(indirizzo);
+        if (!ordineRepository.existsByIndirizzoConsegnaId(indirizzo.getId())) // cancella solo se non è referenziato
+            indirizzoRepository.delete(indirizzo);
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
