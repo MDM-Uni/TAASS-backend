@@ -15,7 +15,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name = "prodotto")
+@Table(name = "prodotto", uniqueConstraints = { @UniqueConstraint(columnNames = { "nome", "prezzo", "categoria" }) })
 public class Prodotto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +33,7 @@ public class Prodotto {
 
     @Lob
     @JsonIgnore
+    @ToString.Exclude
     @Type(type="org.hibernate.type.ImageType")
     @Column(name = "immagine")
     private byte[] immagine;

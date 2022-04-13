@@ -23,7 +23,7 @@ public class ProdottoController {
     private ProdottoRepository repository;
 
     @GetMapping
-    public ResponseEntity<?> getAllProdotti() {
+    public ResponseEntity<List<Prodotto>> getAllProdotti() {
         List<Prodotto> prodotti = new ArrayList<>();
         repository.findAll().forEach(prodotti::add);
         return ResponseEntity.ok().body(prodotti);
