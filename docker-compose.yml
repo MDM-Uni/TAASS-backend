@@ -141,7 +141,7 @@ services:
   ######################### frontend - web #########################
   frontend_web:
     container_name: frontend_web
-    image: marcoscale98/taass_frontend_web:20220411
+    image: marcoscale98/taass
     ports:
       - "4200:80"
     volumes:
