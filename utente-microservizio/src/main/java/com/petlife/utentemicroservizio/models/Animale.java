@@ -25,7 +25,7 @@ public class Animale implements Serializable {
     private Long id;
     @Column(name="nome", nullable = false)
     private String nome;
-    @Column(name = "dataNascita")
+    @Column(name = "dataNascita", nullable = false)
     private Date dataDiNascita;
     @ElementCollection(fetch=FetchType.EAGER)
     @CollectionTable(name = "patologie")
