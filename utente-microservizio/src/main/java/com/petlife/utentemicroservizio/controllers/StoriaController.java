@@ -3,8 +3,10 @@ package com.petlife.utentemicroservizio.controllers;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.petlife.utentemicroservizio.models.Animale;
 import com.petlife.utentemicroservizio.models.EventoPersonalizzato;
+import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.EventoPersonalizzatoRepository;
+import com.petlife.utentemicroservizio.repositories.UtenteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ import java.util.Optional;
 public class StoriaController {
    @Autowired
    private AnimaleRepository animaleRepository;
+   @Autowired
+   private UtenteRepository utenteRepository;
    @Autowired
    private EventoPersonalizzatoRepository eventoPersonalizzatoRepository;
 
@@ -51,6 +55,38 @@ public class StoriaController {
          for (Animale animale : animaleRepository.findAll()) {
             eventiPersonalizzati.addAll(animale.getStoria());
          }
+      }
+      logger.info("eventi personalizzati restituiti");
+      return ResponseEntity.ok(eventiPersonalizzati);
+   }
+
+   @GetMapping(value = {"/getStoriaUtente/{idUtente}"})
+   public ResponseEntity<List<EventoPersonalizzato>> getEventiPersonalizzatiUtente(
+         @PathVariable(value = "idUtente") Long idUtente,
+         @RequestParam(value = "idAnimale", required = false) Long idAnimale) {
+      logger.info("chiamo getEventiPersonalizzatiAnimali");
+      List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
+      Optional<Utente> utente_opt = utenteRepository.findById(idUtente);
+      if (utente_opt.isPresent()) {
+         Utente utente = utente_opt.get();
+         if (idAnimale != null) {
+            logger.info("chiamo getEventiPersonalizzatiUtente specificando idAnimale");
+            Optional<Animale> animale = utente.getAnimale(idAnimale);
+            if (animale.isPresent()) {
+               eventiPersonalizzati = animale.get().getStoria();
+            }
+            else {
+               logger.info("animale non trovato");
+               return ResponseEntity.notFound().build();
+            }
+         } else {
+            for (Animale animale : utente.getAnimali()) {
+               eventiPersonalizzati.addAll(animale.getStoria());
+            }
+         }
+      } else {
+         logger.info("utente non trovato");
+         return ResponseEntity.notFound().build();
       }
       logger.info("eventi personalizzati restituiti");
       return ResponseEntity.ok(eventiPersonalizzati);
