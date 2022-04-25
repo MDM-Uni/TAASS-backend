@@ -17,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -139,9 +142,18 @@ public class OspedaleController {
 
 
    @PostMapping("/pushVisita")
-   public ResponseEntity<Long> createVisita(@RequestBody Visita visita) {
+   public ResponseEntity<?> createVisita(@RequestBody Visita visita) {
       try {
          logger.info("pushVisita chiamata");
+         var minData = LocalDateTime.now();
+         if (visita.getData().isBefore(minData)) {
+            logger.info("data della visita nel passato");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("data della visita nel passato");
+         }
+         if (visita.getDurataInMinuti() <= 0){
+            logger.info("durata della visita minore o uguale a zero");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("durata della visita minore o uguale a zero");
+         }
          loadOspedale();
          OspedaleController.ospedale.getVisite().add(visita);
          Long idVisita = visitaRepository.save(visita).getId();
@@ -152,7 +164,7 @@ public class OspedaleController {
       }
       catch (NoSuchElementException e) {
          logger.info("Errore in creazione visita");
-         return ResponseEntity.internalServerError().build();
+         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore in creazione visita");
       }
    }
 
