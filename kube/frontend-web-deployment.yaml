@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.service.type: nodeport
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: frontend-web
+  name: frontend-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: frontend-web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.service.type: nodeport
+        kompose.version: 1.26.1 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: frontend-web
+    spec:
+      containers:
+        - image: marcoscale98/taass:frontend
+          name: frontend-web
+          ports:
+            - containerPort: 80
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/frontend
+              name: frontend-data
+      restartPolicy: Always
+      volumes:
+        - name: frontend-data
+          persistentVolumeClaim:
+            claimName: frontend-data
+status: {}

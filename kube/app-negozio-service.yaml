@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app-negozio
+  name: app-negozio
+spec:
+  ports:
+    - name: "8082"
+      port: 8082
+      targetPort: 8080
+  selector:
+    io.kompose.service: app-negozio
+status:
+  loadBalancer: {}

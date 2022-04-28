@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dbpostgresql-ospedale
+  name: dbpostgresql-ospedale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: dbpostgresql-ospedale
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.version: 1.26.1 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: dbpostgresql-ospedale
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: ospedale
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_USER
+              value: admin
+            - name: restart
+              value: unless-stopped
+          image: postgres
+          name: postgres-ospedale
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: ospedale-db-data
+      restartPolicy: Always
+      volumes:
+        - name: ospedale-db-data
+          persistentVolumeClaim:
+            claimName: ospedale-db-data
+status: {}
