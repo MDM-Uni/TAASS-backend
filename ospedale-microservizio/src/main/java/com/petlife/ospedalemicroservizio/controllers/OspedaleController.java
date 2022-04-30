@@ -125,14 +125,17 @@ public class OspedaleController {
          @RequestParam(value = "tipoVisita") Optional<String> tipoVisita) {
       try {
          logger.info("chiamo getVisiteAnimali");
+         logger.info("animali: " + animali.toString());
+         logger.info("tipoVisita: " + tipoVisita.toString());
          loadOspedale();
          Stream<Visita> streamVisite = OspedaleController.ospedale.getVisite().stream();
          streamVisite = streamVisite.filter(visita -> animali.contains(new Animale(visita.getIdAnimale())));
          if (tipoVisita.isPresent() && !tipoVisita.get().equals("")) {
             streamVisite = streamVisite.filter(visita -> tipoVisita.get().equals(visita.getTipoVisita().toString()));
          }
-         logger.info("Visite restituite");
-         return new ResponseEntity<>(streamVisite.collect(Collectors.toList()), HttpStatus.OK);
+         List<Visita> visite = streamVisite.collect(Collectors.toList());
+         logger.info(visite.size() +" visite restituite");
+         return new ResponseEntity<>(visite, HttpStatus.OK);
       }
       catch (Exception e) {
          logger.error("Errore nella richiesta di visite", e);
