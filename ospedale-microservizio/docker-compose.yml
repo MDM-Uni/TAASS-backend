@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  dbpostgresql:
+    container_name: postgres_ospedale
+    image: "postgres"
+    ports:
+      - "5431:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ospedale
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+
+#  pgadmin:
+#    container_name: pgadmin4_container
+#    image: dpage/pgadmin4
+#    restart: always
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+#      PGADMIN_DEFAULT_PASSWORD: root
+#      PGADMIN_LISTEN_PORT: 50
+#    ports:
+#      - "5050:50"
+#    volumes:
+#      - pgadmin-data:/var/lib/pgadmin
+#    links:
+#      - "dbpostgresql:pgsql-server"
+#    depends_on:
+#      - dbpostgresql
+#    logging:
+#      driver: none
+
+  app:
+    build: .
+    image: ospedale
+    container_name: ospedale
+    volumes:
+      - ospedale-data:/var/lib/ospedale
+    ports:
+      - "8081:8081"
+    depends_on:
+      - dbpostgresql
+      #- pgadmin
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/ospedale
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+volumes:
+  db-data:
+  #pgadmin-data:
+  ospedale-data:

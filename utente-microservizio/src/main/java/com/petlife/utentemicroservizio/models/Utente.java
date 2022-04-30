@@ -12,15 +12,15 @@ import java.util.List;
 @Entity
 @Table(name="Utente")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Utente implements Evento, Serializable {
+public class Utente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "nome",nullable = false)
     private String nome;
-    @JsonIgnore
-    private String password;
     @NotNull
+    @Column(name = "email",nullable = false)
     private String email;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Animale> animali;
@@ -33,7 +33,6 @@ public class Utente implements Evento, Serializable {
 
     public Utente(){}
 
-    @Override
     public Long getId() {
         return id;
     }
@@ -42,17 +41,8 @@ public class Utente implements Evento, Serializable {
         return nome;
     }
 
-
-    public String getPassword() {
-        return password;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setEmail(String email) {

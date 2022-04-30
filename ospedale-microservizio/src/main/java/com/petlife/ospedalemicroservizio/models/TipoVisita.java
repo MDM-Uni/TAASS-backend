@@ -1,5 +1,8 @@
 package com.petlife.ospedalemicroservizio.models;
 
 public enum TipoVisita {
-   VACCINO, OPERAZIONE, CONTROLLO
+   VACCINO, OPERAZIONE, CONTROLLO;
+   public String toString() {
+      return this.name().toLowerCase();
+   }
 }

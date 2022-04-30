@@ -4,18 +4,26 @@ import com.petlife.utentemicroservizio.models.Animale;
 import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.UtenteRepository;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
+@SessionAttributes("id")
 @RestController
+@Slf4j
 public class UtenteController {
 
     @Autowired
@@ -28,7 +36,7 @@ public class UtenteController {
     private AnimaleRepository animaleRepository;
 
     @PostMapping(value = "/user/create")
-    public Utente postCustomer(@RequestBody Utente utente) {
+    public Utente postUser(@RequestBody Utente utente) {
         return utenteRepository.save(new Utente(utente.getNome(),utente.getEmail(),utente.getAnimali()));
     }
 
@@ -39,26 +47,11 @@ public class UtenteController {
         return users;
     }
 
-    @GetMapping("/exists_user/{id}")
-    public ResponseEntity<Boolean> existUser(@PathVariable("id") long id) {
-        Optional<Utente> user = utenteRepository.findById(id);
-        if(user.isPresent()) {
-            return new ResponseEntity<>(Boolean.TRUE,HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(Boolean.FALSE,HttpStatus.NOT_FOUND);
-        }
-    }
-
     @GetMapping("/animals/{id}")
     public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
+        log.info("chiamo getAnimalsUser");
         Optional<Utente> user = utenteRepository.findById(id);
         return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @DeleteMapping("/user/delete")
-    public ResponseEntity<String> deleteUser(@RequestBody Utente utente) {
-        utenteRepository.delete(utente);
-        return new ResponseEntity<>("Utente: " + utente.getNome() + " è stato eliminato correttamente ", HttpStatus.OK);
     }
 
     @RequestMapping(value="/addAnimal/{id}", method = RequestMethod.POST)
@@ -74,11 +67,6 @@ public class UtenteController {
         }
     }
 
-    @RequestMapping(value="/aggiungiAnimale/{nome}", method = RequestMethod.POST)
-    public ResponseEntity<Animale> addAnimal(@PathVariable("nome") String nome) {
-        return new ResponseEntity<Animale>(animaleRepository.save(new Animale(nome)),HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/removeAnimal/{id}/{idA}" , method = RequestMethod.DELETE)
     public ResponseEntity<String> removeAnimal(@PathVariable("id") long id, @PathVariable("idA") long idA) {
         Optional<Utente> user = utenteRepository.findById(id);
@@ -88,15 +76,20 @@ public class UtenteController {
             _utente.removeAnimale(animal.get());
             animaleRepository.delete(animal.get());
             utenteRepository.save(_utente);
-            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_A,animal.get());
+            try {
+                rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE, RabbitMQCOnfig.ROUTINGKEY_A, animal.get().getId());
+            }
+            catch (AmqpException e) {
+                log.error("Errore nell'invio dell'id dell'animale eliminato nella coda");
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @RequestMapping(value = "/updateAnimal/{idU}/{idA}" , method = RequestMethod.PUT)
-    public ResponseEntity<Animale> updateAnimal(@PathVariable("idU") long id, @PathVariable("idA") long idA, @RequestBody Animale animale) {
+    @RequestMapping(value = "/updateAnimal/{id}/{idA}" , method = RequestMethod.PUT)
+    public ResponseEntity<Animale> updateAnimal(@PathVariable("id") long id, @PathVariable("idA") Long idA, @RequestBody Animale animale) {
         Optional<Utente> user = utenteRepository.findById(id);
         Optional<Animale> animal = animaleRepository.findById(idA);
         if (user.isPresent() && animal.isPresent()) {
@@ -107,7 +100,7 @@ public class UtenteController {
                 _animale.setDataDiNascita(animale.getDataDiNascita());
                 _animale.setPatologie(animale.getPatologie());
                 _animale.setPeso(animale.getPeso());
-                _animale.setPeloLungo(animale.getPeloLungo());
+                _animale.setPeloLungo(animale.isPeloLungo());
                 _animale.setRazza(animale.getRazza());
                 return new ResponseEntity<>(animaleRepository.save(_animale),HttpStatus.OK);
             }
@@ -120,35 +113,12 @@ public class UtenteController {
         Optional<Utente> user = utenteRepository.findByEmail(email);
         List<Animale> animali = new ArrayList<Animale>();
         if(user.isPresent()) {
-            return user.get();
+            Utente utente = user.get();
+            return utente;
         } else {
             Utente utente = utenteRepository.save(new Utente(nome, email, animali));
-            rabbitTemplate.convertAndSend(RabbitMQCOnfig.EXCHANGE,RabbitMQCOnfig.ROUTINGKEY_B,utente);
             return utente;
         }
     }
-
-    /*
-    @GetMapping("/")
-    public String helloWorld(){
-        return "Autenticarsi prima";
-    }
-
-    @GetMapping("/autenticazionegoogle")
-    public Utente user(@AuthenticationPrincipal OAuth2User principal) throws JsonProcessingException, ParseException {
-        String nome = Collections.singletonMap("name", principal.getAttribute("name")).get("name").toString();
-        String email = Collections.singletonMap("email", principal.getAttribute("email")).get("email").toString();
-        List<Animale> animali = new ArrayList<>();
-        return utenteRepository.save(new Utente(nome,email,animali));
-    }
-
-    @GetMapping("/userTest")
-    public String userTest(@AuthenticationPrincipal OAuth2User principal) {
-        String username = Collections.singletonMap("name", principal.getAttribute("name")).get("name").toString();
-        String email = Collections.singletonMap("email", principal.getAttribute("email")).get("email").toString();
-        return "Il tuo nome è: " + username + "la tua email è: " + email;
-    }
-
-    */
 
 }
