@@ -1,0 +1,13 @@
+server:
+  port: 8079
+
+spring:
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      routes:
+        - id : utente
+          uri : http://localhost:8080/
+          predicates:
+            - Path= /utente/**
