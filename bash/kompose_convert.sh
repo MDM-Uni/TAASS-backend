@@ -1,0 +1,1 @@
+kompose -f docker-compose_kompose.yml convert --out kube

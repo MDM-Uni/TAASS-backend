@@ -22,6 +22,7 @@ spec:
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
       labels:
+        io.kompose.network/ospedale-net: "true"
         io.kompose.service: dbpostgresql-ospedale
     spec:
       containers:
@@ -40,11 +41,11 @@ spec:
             - containerPort: 5432
           resources: {}
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: ospedale-db-data
+            - mountPath: /var/lib/dbpostgresql-ospedale
+              name: dbpostgresql-ospedale-data
       restartPolicy: Always
       volumes:
-        - name: ospedale-db-data
+        - name: dbpostgresql-ospedale-data
           persistentVolumeClaim:
-            claimName: ospedale-db-data
+            claimName: dbpostgresql-ospedale-data
 status: {}

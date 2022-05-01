@@ -9,8 +9,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-#    volumes:
-#      - rabbitmq-data:/var/lib/rabbitmq
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
 
   ######################### utente #########################
   dbpostgresql-utente:
@@ -19,12 +19,14 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - utente-db-data:/var/lib/postgresql/data
+      - dbpostgresql-utente-data:/var/lib/dbpostgreesql-utente
     environment:
       POSTGRES_DB: utente
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
+    networks:
+      - utente-net
 
   app-utente:
     image: marcoscale98/taass:utente
@@ -46,6 +48,9 @@ services:
       - SPRING_RABBITMQ_PASSWORD=guest
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
+    networks:
+      - utente-net
+      - frontend-backend-net
     labels:
       kompose.service.type: nodeport
 
@@ -57,12 +62,14 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - ospedale-db-data:/var/lib/postgresql/data
+      - dbpostgresql-ospedale-data:/var/lib/dbpostgresql-ospedale
     environment:
       POSTGRES_DB: ospedale
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
+    networks:
+      - ospedale-net
 
   app-ospedale:
     image: marcoscale98/taass:ospedale
@@ -84,6 +91,9 @@ services:
       - SPRING_RABBITMQ_PASSWORD=guest
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
+    networks:
+      - ospedale-net
+      - frontend-backend-net
     labels:
       kompose.service.type: nodeport
 
@@ -94,12 +104,14 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - negozio-db-data:/var/lib/postgresql/data
+      - dbpostgresql-negozio-data:/var/lib/dbpostgresql-negozio
     environment:
       POSTGRES_DB: negozio
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
+    networks:
+      - negozio-net
 
   app-negozio:
     image: marcoscale98/taass:negozio
@@ -115,6 +127,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - negozio-net
+      - frontend-backend-net
+    labels:
+      kompose.service.type: nodeport
 
   ######################### pgadmin #########################
   pgadmin:
@@ -152,18 +169,27 @@ services:
       - app-negozio
       - app-utente
       - app-ospedale
+    networks:
+      - frontend-backend-net
     labels:
       kompose.service.type: nodeport
 
 
 ######################### volumi #########################
 volumes:
-  negozio-db-data:
+  dbpostgresql-negozio-data:
   negozio-data:
-  utente-db-data:
+  dbpostgresql-utente-data:
   utente-data:
-  ospedale-db-data:
+  dbpostgresql-ospedale-data:
   ospedale-data:
   pgadmin-data:
   rabbitmq-data:
   frontend-data:
+
+######################### networks #########################
+networks:
+  negozio-net:
+  utente-net:
+  ospedale-net:
+  frontend-backend-net:

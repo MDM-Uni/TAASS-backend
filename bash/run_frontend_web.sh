@@ -1,0 +1,1 @@
+minikube service frontend-web --url

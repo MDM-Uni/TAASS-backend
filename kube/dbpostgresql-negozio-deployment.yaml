@@ -22,6 +22,7 @@ spec:
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
       labels:
+        io.kompose.network/negozio-net: "true"
         io.kompose.service: dbpostgresql-negozio
     spec:
       containers:
@@ -40,11 +41,11 @@ spec:
             - containerPort: 5432
           resources: {}
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: negozio-db-data
+            - mountPath: /var/lib/dbpostgresql-negozio
+              name: dbpostgresql-negozio-data
       restartPolicy: Always
       volumes:
-        - name: negozio-db-data
+        - name: dbpostgresql-negozio-data
           persistentVolumeClaim:
-            claimName: negozio-db-data
+            claimName: dbpostgresql-negozio-data
 status: {}

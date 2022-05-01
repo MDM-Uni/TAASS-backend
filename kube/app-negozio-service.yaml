@@ -3,6 +3,7 @@ kind: Service
 metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.service.type: nodeport
     kompose.version: 1.26.1 (HEAD)
   creationTimestamp: null
   labels:
@@ -15,5 +16,6 @@ spec:
       targetPort: 8080
   selector:
     io.kompose.service: app-negozio
+  type: NodePort
 status:
   loadBalancer: {}

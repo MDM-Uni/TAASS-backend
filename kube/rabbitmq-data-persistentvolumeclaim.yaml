@@ -3,8 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: null
   labels:
-    io.kompose.service: utente-db-data
-  name: utente-db-data
+    io.kompose.service: rabbitmq-data
+  name: rabbitmq-data
 spec:
   accessModes:
     - ReadWriteOnce

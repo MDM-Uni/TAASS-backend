@@ -1,0 +1,1 @@
+kubectl logs -l io.kompose.service=app-utente --tail=-1
