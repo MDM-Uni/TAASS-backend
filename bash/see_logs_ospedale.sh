@@ -1,1 +1,1 @@
-kubectl logs -l io.kompose.service=app-ospedale --tail=-1
+kubectl logs -f -l io.kompose.service=app-ospedale --tail=-1
