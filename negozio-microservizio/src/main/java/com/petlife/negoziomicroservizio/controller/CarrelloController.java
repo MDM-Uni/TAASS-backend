@@ -1,5 +1,6 @@
 package com.petlife.negoziomicroservizio.controller;
 
+import com.petlife.negoziomicroservizio.controller.utils.UtenteChecker;
 import com.petlife.negoziomicroservizio.model.Carrello;
 import com.petlife.negoziomicroservizio.model.Prodotto;
 import com.petlife.negoziomicroservizio.model.Utente;
@@ -22,23 +23,17 @@ public class CarrelloController {
     @Autowired
     private ProdottoRepository prodottoRepository;
     @Autowired
-    private UtenteRepository utenteRepository;
+    UtenteChecker utenteChecker;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCarrello(@PathVariable long id) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(id);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(id);
 
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente con id=" + id + " non trovato");
 
         Utente utente = utenteOpt.get();
         Carrello carrello = utente.getCarrello();
-
-        if (carrello == null) {
-            carrello = carrelloRepository.save(new Carrello());
-            utente.setCarrello(carrello);
-            utenteRepository.save(utente);
-        }
 
         return ResponseEntity.status(HttpStatus.OK).body(carrello);
     }

@@ -1,5 +1,6 @@
 package com.petlife.negoziomicroservizio.controller;
 
+import com.petlife.negoziomicroservizio.controller.utils.UtenteChecker;
 import com.petlife.negoziomicroservizio.model.Indirizzo;
 import com.petlife.negoziomicroservizio.model.Utente;
 import com.petlife.negoziomicroservizio.repo.IndirizzoRepository;
@@ -19,10 +20,12 @@ public class IndirizzoController {
     private IndirizzoRepository indirizzoRepository;
     @Autowired
     private UtenteRepository utenteRepository;
+    @Autowired
+    UtenteChecker utenteChecker;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getIndirizzi(@PathVariable long id) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(id);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(id);
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + id + " non trovato");
         Utente utente = utenteOpt.get();
@@ -32,7 +35,7 @@ public class IndirizzoController {
 
     @PostMapping("/{id}/crea")
     public ResponseEntity<?> aggiungiIndirizzo(@PathVariable long id, @RequestBody Indirizzo indirizzo) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(id);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(id);
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + id + " non trovato");
         Utente utente = utenteOpt.get();
@@ -46,7 +49,7 @@ public class IndirizzoController {
 
     @PostMapping("/{id}/rimuovi")
     public ResponseEntity<?> rimuoviIndirizzo(@PathVariable long id, @RequestParam long idIndirizzo) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(id);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(id);
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + id + " non trovato");
         Utente utente = utenteOpt.get();
