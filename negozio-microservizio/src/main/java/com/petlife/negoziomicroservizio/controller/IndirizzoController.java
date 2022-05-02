@@ -4,6 +4,7 @@ import com.petlife.negoziomicroservizio.controller.utils.UtenteChecker;
 import com.petlife.negoziomicroservizio.model.Indirizzo;
 import com.petlife.negoziomicroservizio.model.Utente;
 import com.petlife.negoziomicroservizio.repo.IndirizzoRepository;
+import com.petlife.negoziomicroservizio.repo.OrdineRepository;
 import com.petlife.negoziomicroservizio.repo.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/indirizzi")
 public class IndirizzoController {
@@ -22,6 +23,8 @@ public class IndirizzoController {
     private UtenteRepository utenteRepository;
     @Autowired
     UtenteChecker utenteChecker;
+    @Autowired
+    private OrdineRepository ordineRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getIndirizzi(@PathVariable long id) {
@@ -62,7 +65,9 @@ public class IndirizzoController {
         utente.rimuoviIndirizzo(indirizzo);
         utenteRepository.save(utente);
 
-        indirizzoRepository.delete(indirizzo);
+        if (!ordineRepository.existsByIndirizzoConsegnaId(indirizzo.getId())) // cancella solo se non è referenziato
+            indirizzoRepository.delete(indirizzo);
+
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

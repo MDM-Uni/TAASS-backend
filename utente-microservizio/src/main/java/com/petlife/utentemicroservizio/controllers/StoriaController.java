@@ -2,10 +2,11 @@ package com.petlife.utentemicroservizio.controllers;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.petlife.utentemicroservizio.models.Animale;
-import com.petlife.utentemicroservizio.models.Evento;
 import com.petlife.utentemicroservizio.models.EventoPersonalizzato;
+import com.petlife.utentemicroservizio.models.Utente;
 import com.petlife.utentemicroservizio.repositories.AnimaleRepository;
 import com.petlife.utentemicroservizio.repositories.EventoPersonalizzatoRepository;
+import com.petlife.utentemicroservizio.repositories.UtenteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,17 +24,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/storia")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class StoriaController {
    @Autowired
    private AnimaleRepository animaleRepository;
+   @Autowired
+   private UtenteRepository utenteRepository;
    @Autowired
    private EventoPersonalizzatoRepository eventoPersonalizzatoRepository;
 
    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-   @GetMapping(value = {"/getStoria","/getStoria/{idAnimale}"})
-   public ResponseEntity<List<EventoPersonalizzato>> getStoria(@PathVariable("idAnimale") Optional<Long> idAnimale) {
+   @GetMapping(value = {"/getStoria", "/getStoria/{idAnimale}"})
+   public ResponseEntity<List<EventoPersonalizzato>> getStoria(
+         @PathVariable("idAnimale") Optional<Long> idAnimale) {
       logger.info("chiamo getStoria");
       List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
       if (idAnimale.isPresent()) {
@@ -43,9 +46,9 @@ public class StoriaController {
          if (animale.isPresent()) {
             eventiPersonalizzati = animale.get().getStoria();
          } else {
-         logger.info("animale non trovato");
-         return ResponseEntity.internalServerError().build();
-      }
+            logger.info("animale non trovato");
+            return ResponseEntity.internalServerError().build();
+         }
       } else {
          logger.info("chiamo getStoria senza idAnimale");
          eventiPersonalizzati = new ArrayList<>();
@@ -57,14 +60,46 @@ public class StoriaController {
       return ResponseEntity.ok(eventiPersonalizzati);
    }
 
-   @PostMapping(value ="/pushEventoPersonalizzato/{idAnimale}", consumes = { "multipart/form-data" })
+   @GetMapping(value = {"/getStoriaUtente/{idUtente}"})
+   public ResponseEntity<List<EventoPersonalizzato>> getEventiPersonalizzatiUtente(
+         @PathVariable(value = "idUtente") Long idUtente,
+         @RequestParam(value = "idAnimale", required = false) Long idAnimale) {
+      logger.info("chiamo getEventiPersonalizzatiAnimali");
+      List<EventoPersonalizzato> eventiPersonalizzati = new ArrayList<>();
+      Optional<Utente> utente_opt = utenteRepository.findById(idUtente);
+      if (utente_opt.isPresent()) {
+         Utente utente = utente_opt.get();
+         if (idAnimale != null) {
+            logger.info("chiamo getEventiPersonalizzatiUtente specificando idAnimale");
+            Optional<Animale> animale = utente.getAnimale(idAnimale);
+            if (animale.isPresent()) {
+               eventiPersonalizzati = animale.get().getStoria();
+            }
+            else {
+               logger.info("animale non trovato");
+               return ResponseEntity.notFound().build();
+            }
+         } else {
+            for (Animale animale : utente.getAnimali()) {
+               eventiPersonalizzati.addAll(animale.getStoria());
+            }
+         }
+      } else {
+         logger.info("utente non trovato");
+         return ResponseEntity.notFound().build();
+      }
+      logger.info("eventi personalizzati restituiti");
+      return ResponseEntity.ok(eventiPersonalizzati);
+   }
+
+   @PostMapping(value = "/pushEventoPersonalizzato/{idAnimale}", consumes = {"multipart/form-data"})
    public ResponseEntity<Long> postEventoPersonalizzato(
          @PathVariable("idAnimale") long idAnimale,
          @RequestParam("testo") String testo,
          @RequestParam("data")
          @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
          @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
-         Date data,
+               Date data,
          @ModelAttribute("immagine") Optional<MultipartFile> immagine) throws IOException {
       logger.info("chiamo postEventoPersonalizzato");
       logger.info("idAnimale: " + idAnimale + "\n" +
@@ -119,7 +154,7 @@ public class StoriaController {
    }
 
    @ResponseBody
-   @GetMapping(value="/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
+   @GetMapping(value = "/getImmagineEventoPersonalizzato/{idEvento}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
    public ResponseEntity<byte[]> getImmagineEventoPersonalizzato(@PathVariable("idEvento") long idEvento) {
       logger.info("chiamo getImmagineEventoPersonalizzato");
       Optional<EventoPersonalizzato> eventoPersonalizzato = eventoPersonalizzatoRepository.findById(idEvento);
@@ -128,8 +163,7 @@ public class StoriaController {
          if (eventoPersonalizzato.get().getImmagine() != null) {
             logger.info("immagine restituita");
             return ResponseEntity.ok(eventoPersonalizzato.get().getImmagine());
-         }
-         else {
+         } else {
             logger.info("immagine non presente");
             return ResponseEntity.notFound().build();
          }

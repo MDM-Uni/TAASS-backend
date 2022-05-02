@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-alpine
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+#    volumes:
+#      - rabbitmq-data:/var/lib/rabbitmq
+
   ######################### utente #########################
   dbpostgresql_utente:
     container_name: postgres_utente
@@ -25,16 +36,17 @@ services:
       - "8080:8080"
     depends_on:
       - dbpostgresql_utente
+      - rabbitmq
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql_utente:5432/utente
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-      - RABBIT_DATASOURCE_USERNAME=guest
-      - RABBIT_DATASOURCE_PASSWORD=guest
-      - RABBIT_DATASOURCE_HOST=localhost
-      - RABBIT_DATASOURCE_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
 
   ######################### ospedale #########################
   dbpostgresql_ospedale:
@@ -60,16 +72,17 @@ services:
       - "8081:8080"
     depends_on:
       - dbpostgresql_ospedale
+      - rabbitmq
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql_ospedale:5432/ospedale
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-      - RABBIT_DATASOURCE_USERNAME=guest
-      - RABBIT_DATASOURCE_PASSWORD=guest
-      - RABBIT_DATASOURCE_HOST=localhost
-      - RABBIT_DATASOURCE_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
 
   ######################### negozio #########################
   dbpostgresql_negozio:
@@ -105,7 +118,7 @@ services:
   pgadmin:
     container_name: pgadmin4_container_master
     image: dpage/pgadmin4
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
@@ -125,6 +138,20 @@ services:
     logging:
       driver: none
 
+  ######################### frontend - web #########################
+  frontend_web:
+    container_name: frontend_web
+    image: marcoscale98/taass
+    ports:
+      - "4200:80"
+    volumes:
+      - frontend-data:/var/lib/frontend
+    depends_on:
+      - app_negozio
+      - app_utente
+      - app_ospedale
+
+
 ######################### volumi #########################
 volumes:
   negozio-db-data:
@@ -134,3 +161,5 @@ volumes:
   ospedale-db-data:
   ospedale-data:
   pgadmin-data:
+  rabbitmq-data:
+  frontend-data:
