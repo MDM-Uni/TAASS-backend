@@ -151,6 +151,17 @@ services:
       - app_utente
       - app_ospedale
 
+ ######################## api-gateway ###################
+ api-gateway:
+   container_name: api-gateway
+   build: api-gateway
+   image: api-gateway
+   ports:
+     - "8079:8079"
+   depends_on:
+     - app_negozio
+     - app_utente
+     - app_ospedale
 
 ######################### volumi #########################
 volumes:
