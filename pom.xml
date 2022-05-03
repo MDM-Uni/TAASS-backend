@@ -15,6 +15,7 @@
         <module>ospedale-microservizio</module>
         <module>negozio-microservizio</module>
         <module>utente-microservizio</module>
+        <module>api-gateway</module>
     </modules>
 
 
