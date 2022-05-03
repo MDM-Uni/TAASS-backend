@@ -33,7 +33,7 @@ spec:
             - name: SPRING_DATASOURCE_PASSWORD
               value: admin
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://dbpostgresql-negozio:5432/negozio
+              value: jdbc:postgresql://dbpostgresql-negozio:5435/negozio
             - name: SPRING_DATASOURCE_USERNAME
               value: admin
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
