@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.service.type: nodeport
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app-negozio
+  name: app-negozio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: app-negozio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.service.type: nodeport
+        kompose.version: 1.26.1 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/frontend-backend-net: "true"
+        io.kompose.network/negozio-net: "true"
+        io.kompose.service: app-negozio
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: admin
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://dbpostgresql-negozio:5435/negozio
+            - name: SPRING_DATASOURCE_USERNAME
+              value: admin
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+          image: marcoscale98/taass:negozio
+          name: microservizio-negozio
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/negozio
+              name: negozio-data
+      restartPolicy: Always
+      volumes:
+        - name: negozio-data
+          persistentVolumeClaim:
+            claimName: negozio-data
+status: {}

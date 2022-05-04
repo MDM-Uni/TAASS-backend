@@ -11,26 +11,24 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
-    networks:
-      - general-net
 
   ######################### utente #########################
-  dbpostgresqlutente:
+  dbpostgresql-utente:
     container_name: postgres_utente
     image: "postgres"
     ports:
       - "5433:5432"
     volumes:
-      - dbpostgresql-utente-data:/var/lib/dbpostgreesqlutente
+      - dbpostgresql-utente-data:/var/lib/dbpostgreesql-utente
     environment:
       POSTGRES_DB: utente
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
     networks:
-      - general-net
+      - utente-net
 
-  apputente:
+  app-utente:
     image: marcoscale98/taass:utente
     container_name: microservizio_utente
     volumes:
@@ -38,10 +36,10 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - dbpostgresqlutente
+      - dbpostgresql-utente
       - rabbitmq
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresqlutente:5433/utente
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-utente:5433/utente
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -51,30 +49,29 @@ services:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
     networks:
-      - general-net
+      - utente-net
+      - frontend-backend-net
     labels:
       kompose.service.type: NodePort
-      kompose.service.nodeport.port: "30000"
-
 
 
   ######################### ospedale #########################
-  dbpostgresqlospedale:
+  dbpostgresql-ospedale:
     container_name: postgres_ospedale
     image: "postgres"
     ports:
       - "5434:5432"
     volumes:
-      - dbpostgresql-ospedale-data:/var/lib/dbpostgresqlospedale
+      - dbpostgresql-ospedale-data:/var/lib/dbpostgresql-ospedale
     environment:
       POSTGRES_DB: ospedale
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
     networks:
-      - general-net
+      - ospedale-net
 
-  appospedale:
+  app-ospedale:
     image: marcoscale98/taass:ospedale
     container_name: microservizio_ospedale
     volumes:
@@ -82,10 +79,10 @@ services:
     ports:
       - "8081:8080"
     depends_on:
-      - dbpostgresqlospedale
+      - dbpostgresql-ospedale
       - rabbitmq
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresqlospedale:5434/ospedale
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-ospedale:5434/ospedale
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -95,28 +92,28 @@ services:
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
     networks:
-      - general-net
+      - ospedale-net
+      - frontend-backend-net
     labels:
       kompose.service.type: NodePort
-      kompose.service.nodeport.port: "30004"
 
   ######################### negozio #########################
-  dbpostgresqlnegozio:
+  dbpostgresql-negozio:
     container_name: postgres_negozio
     image: "postgres"
     ports:
       - "5435:5432"
     volumes:
-      - dbpostgresql-negozio-data:/var/lib/dbpostgresqlnegozio
+      - dbpostgresql-negozio-data:/var/lib/dbpostgresql-negozio
     environment:
       POSTGRES_DB: negozio
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       restart: unless-stopped
     networks:
-      - general-net
+      - negozio-net
 
-  appnegozio:
+  app-negozio:
     image: marcoscale98/taass:negozio
     container_name: microservizio_negozio
     volumes:
@@ -124,17 +121,17 @@ services:
     ports:
       - "8082:8080"
     depends_on:
-      - dbpostgresqlnegozio
+      - dbpostgresql-negozio
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresqlnegozio:5435/negozio
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-negozio:5435/negozio
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     networks:
-      - general-net
+      - negozio-net
+      - frontend-backend-net
     labels:
       kompose.service.type: NodePort
-      kompose.service.nodeport.port: "30002"
 
   ######################### pgadmin #########################
   pgadmin:
@@ -154,16 +151,14 @@ services:
       - "dbpostgresql-utente:pgsql-server"
       - "dbpostgresql-ospedale:pgsql-server"
     depends_on:
-      - dbpostgresqlnegozio
-      - dbpostgresqlutente
-      - dbpostgresqlospedale
+      - dbpostgresql-negozio
+      - dbpostgresql-utente
+      - dbpostgresql-ospedale
     logging:
       driver: none
-    networks:
-      - general-net
 
   ######################### frontend - web #########################
-  frontendweb:
+  frontend-web:
     container_name: frontend_web
     image: marcoscale98/taass:frontend
     ports:
@@ -171,14 +166,13 @@ services:
     volumes:
       - frontend-data:/var/lib/frontend
     depends_on:
-      - appnegozio
-      - apputente
-      - appospedale
+      - app-negozio
+      - app-utente
+      - app-ospedale
     networks:
-      - general-net
+      - frontend-backend-net
     labels:
       kompose.service.type: NodePort
-      kompose.service.nodeport.port: "30003"
 
 
 ######################### volumi #########################
@@ -199,4 +193,3 @@ networks:
   utente-net:
   ospedale-net:
   frontend-backend-net:
-  general-net:
