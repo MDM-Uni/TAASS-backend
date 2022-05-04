@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: dbpostgresql-negozio
+  name: dbpostgresql-negozio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: dbpostgresql-negozio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.version: 1.26.1 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/negozio-net: "true"
+        io.kompose.service: dbpostgresql-negozio
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: negozio
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_USER
+              value: admin
+            - name: restart
+              value: unless-stopped
+          image: postgres
+          name: postgres-negozio
+          ports:
+            - containerPort: 5432
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/dbpostgresql-negozio
+              name: dbpostgresql-negozio-data
+      restartPolicy: Always
+      volumes:
+        - name: dbpostgresql-negozio-data
+          persistentVolumeClaim:
+            claimName: dbpostgresql-negozio-data
+status: {}

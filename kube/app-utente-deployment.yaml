@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
-    kompose.service.type: nodeport
+    kompose.service.type: NodePort
     kompose.version: 1.26.1 (HEAD)
   creationTimestamp: null
   labels:
@@ -20,7 +20,7 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
-        kompose.service.type: nodeport
+        kompose.service.type: NodePort
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
       labels:
