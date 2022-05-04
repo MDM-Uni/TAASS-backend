@@ -11,11 +11,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -126,4 +123,12 @@ public class UtenteController {
         }
     }
 
+    @GetMapping(value = "user/{id}")
+    public ResponseEntity<Boolean> findUserById(@PathVariable long id) {
+        Optional<Utente> user = utenteRepository.findById(id);
+        if (user.isPresent())
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        else
+         return ResponseEntity.status(HttpStatus.OK).body(false);
+    }
 }

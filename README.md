@@ -11,3 +11,6 @@ Tag:
 es. di immagine: marcoscale98/taass:frontend  
 
 Eventualmente inserire la data di build dopo il tag principale.
+
+## Bacheche Trello
+Abbiamo utilizzato [Trello](https://trello.com/taass___) come app di Project Management.
