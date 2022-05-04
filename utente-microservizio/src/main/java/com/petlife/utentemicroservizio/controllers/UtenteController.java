@@ -11,11 +11,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,15 +40,17 @@ public class UtenteController {
 
     @GetMapping("/users")
     public List<Utente> getAllUsers() {
+        log.info("chiamo getAllUsers");
         List<Utente> users = new ArrayList<>();
         utenteRepository.findAll().forEach(users::add);
+        log.info("restituisco tutti gli utenti");
         return users;
     }
 
     @GetMapping("/animals/{id}")
     public ResponseEntity<List<Animale>> getAnimalsUser(@PathVariable("id") long id) {
         log.info("chiamo getAnimalsUser");
-        Optional<Utente> user = utenteRepository.findById(id);
+        Optional<Utente> user = utenteRepository.findById(id);;
         return user.map(utente -> new ResponseEntity<>(utente.getAnimali(), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -111,15 +110,26 @@ public class UtenteController {
 
     @GetMapping(value = "user/{email}/{nome}")
     public Utente getUser(@PathVariable String email, @PathVariable String nome) {
+        log.info("Ricevuta richiesta di ricerca/salvataggio utente con email: " + email + " e nome: " + nome);
         Optional<Utente> user = utenteRepository.findByEmail(email);
         List<Animale> animali = new ArrayList<Animale>();
         if(user.isPresent()) {
             Utente utente = user.get();
+            log.info("Utente trovato");
             return utente;
         } else {
             Utente utente = utenteRepository.save(new Utente(nome, email, animali));
+            log.info("Utente salvato");
             return utente;
         }
     }
 
+    @GetMapping(value = "user/{id}")
+    public ResponseEntity<Boolean> findUserById(@PathVariable long id) {
+        Optional<Utente> user = utenteRepository.findById(id);
+        if (user.isPresent())
+            return ResponseEntity.status(HttpStatus.OK).body(true);
+        else
+         return ResponseEntity.status(HttpStatus.OK).body(false);
+    }
 }

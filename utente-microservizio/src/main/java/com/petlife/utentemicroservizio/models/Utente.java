@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name="Utente")
@@ -65,4 +66,7 @@ public class Utente implements Serializable {
         this.animali.remove(animale);
     }
 
+    public Optional<Animale> getAnimale(Long idAnimale) {
+        return animali.stream().filter(animale -> animale.getId().equals(idAnimale)).findFirst();
+    }
 }

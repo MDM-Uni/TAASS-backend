@@ -1,5 +1,6 @@
 package com.petlife.negoziomicroservizio.controller;
 
+import com.petlife.negoziomicroservizio.controller.utils.UtenteChecker;
 import com.petlife.negoziomicroservizio.model.*;
 import com.petlife.negoziomicroservizio.repo.*;
 import org.aspectj.weaver.ast.Or;
@@ -25,10 +26,12 @@ public class OrdineController {
     private IndirizzoRepository indirizzoRepository;
     @Autowired
     private AnimaleRepository animaleRepository;
+    @Autowired
+    UtenteChecker utenteChecker;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrdini(@PathVariable long id) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(id);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(id);
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + id + " non trovato");
         Utente utente = utenteOpt.get();
@@ -38,7 +41,7 @@ public class OrdineController {
 
     @GetMapping("/{idUtente}/{idAnimale}")
     public ResponseEntity<?> getOrdiniAnimale(@PathVariable long idUtente, @PathVariable long idAnimale) {
-        Optional<Utente> utenteOpt = utenteRepository.findById(idUtente);
+        Optional<Utente> utenteOpt = utenteChecker.getUtente(idUtente);
         if (utenteOpt.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utente id=" + idUtente + " non trovato");
         Utente utente = utenteOpt.get();
