@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.service.type: NodePort
+    kompose.version: 1.26.1 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-gateway
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: api-gateway
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.service.type: NodePort
+        kompose.version: 1.26.1 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/frontend-apigateway-net: "true"
+        io.kompose.network/microservizi-net: "true"
+        io.kompose.service: api-gateway
+    spec:
+      containers:
+        - env:
+            - name: SERVER_PORT
+              value: "8079"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_ID
+              value: app_utente
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]
+              value: Path=/utente/**,/storia/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_URI
+              value: http://host.docker.internal:8080/
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_ID
+              value: app_ospedale
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]
+              value: Path=/ospedale/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_URI
+              value: http://host.docker.internal:8081/
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_FILTERS[0]
+              value: PrefixPath=/api/v1
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_ID
+              value: app_negozio
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]
+              value: Path=/carrelli/**,/indirizzi/**,/ordini/**,/prodotti/**
+            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_URI
+              value: http://host.docker.internal:8082/
+          image: marcoscale98/taass:apigateway
+          name: api-gateway
+          ports:
+            - containerPort: 8079
+          resources: {}
+      restartPolicy: Always
+status: {}

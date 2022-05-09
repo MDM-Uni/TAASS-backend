@@ -24,7 +24,7 @@ spec:
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
       labels:
-        io.kompose.network/frontend-backend-net: "true"
+        io.kompose.network/microservizi-net: "true"
         io.kompose.network/ospedale-net: "true"
         io.kompose.service: app-ospedale
     spec:
