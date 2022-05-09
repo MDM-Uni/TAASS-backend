@@ -1,1 +1,1 @@
-kubectl logs -f -l io.kompose.service=appnegozio --tail=-1
+kubectl logs -f -l io.kompose.service=app-negozio --tail=-1
