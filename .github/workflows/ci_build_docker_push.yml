@@ -49,3 +49,9 @@ jobs:
         docker buildx build --push \
           --tag marcoscale98/taass:utente \
           --platform linux/amd64,linux/arm64 .
+    - name: build the image of api-gateway
+      working-directory: ./api-gateway
+      run: |
+        docker buildx build --push \
+          --tag marcoscale98/taass:apigateway \
+          --platform linux/amd64,linux/arm64 .

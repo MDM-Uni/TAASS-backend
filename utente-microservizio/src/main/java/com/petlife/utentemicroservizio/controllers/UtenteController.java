@@ -20,6 +20,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @SessionAttributes("id")
 @RestController
+@RequestMapping("/utente")
 @Slf4j
 public class UtenteController {
 
