@@ -31,25 +31,25 @@ spec:
         - env:
             - name: SERVER_PORT
               value: "8079"
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_ID
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0__ID
               value: app_utente
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0__PREDICATES_0_
               value: Path=/utente/**,/storia/**
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[0]_URI
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0__URI
               value: http://host.docker.internal:8080/
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_ID
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1__ID
               value: app_ospedale
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1__PREDICATES_0_
               value: Path=/ospedale/**
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[1]_URI
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1__URI
               value: http://host.docker.internal:8081/
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_FILTERS[0]
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2__FILTERS_0_
               value: PrefixPath=/api/v1
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_ID
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2__ID
               value: app_negozio
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2__PREDICATES_0_
               value: Path=/carrelli/**,/indirizzi/**,/ordini/**,/prodotti/**
-            - name: SPRING_CLOUD_GATEWAY_ROUTES[2]_URI
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2__URI
               value: http://host.docker.internal:8082/
           image: marcoscale98/taass:apigateway
           name: api-gateway
