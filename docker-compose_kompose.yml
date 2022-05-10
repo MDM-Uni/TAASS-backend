@@ -1,0 +1,226 @@
+version: '3'
+# da usare anche con il 'kompose' (sconsigliato per il development)
+services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-alpine
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - microservizi-net
+
+  ######################### utente #########################
+  dbpostgresql-utente:
+    container_name: postgres_utente
+    image: "postgres"
+    ports:
+      - "5433:5432"
+    volumes:
+      - dbpostgresql-utente-data:/var/lib/dbpostgreesql-utente
+    environment:
+      POSTGRES_DB: utente
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+    networks:
+      - utente-net
+
+  app-utente:
+    image: marcoscale98/taass:utente
+    container_name: microservizio_utente
+    volumes:
+      - utente-data:/var/lib/utente
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dbpostgresql-utente
+      - rabbitmq
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-utente:5433/utente
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+    networks:
+      - utente-net
+      - microservizi-net
+    labels:
+      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+
+
+  ######################### ospedale #########################
+  dbpostgresql-ospedale:
+    container_name: postgres_ospedale
+    image: "postgres"
+    ports:
+      - "5434:5432"
+    volumes:
+      - dbpostgresql-ospedale-data:/var/lib/dbpostgresql-ospedale
+    environment:
+      POSTGRES_DB: ospedale
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+    networks:
+      - ospedale-net
+
+  app-ospedale:
+    image: marcoscale98/taass:ospedale
+    container_name: microservizio_ospedale
+    volumes:
+      - ospedale-data:/var/lib/ospedale
+    ports:
+      - "8081:8080"
+    depends_on:
+      - dbpostgresql-ospedale
+      - rabbitmq
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-ospedale:5434/ospedale
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+    networks:
+      - ospedale-net
+      - microservizi-net
+    labels:
+      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+
+  ######################### negozio #########################
+  dbpostgresql-negozio:
+    container_name: postgres_negozio
+    image: "postgres"
+    ports:
+      - "5435:5432"
+    volumes:
+      - dbpostgresql-negozio-data:/var/lib/dbpostgresql-negozio
+    environment:
+      POSTGRES_DB: negozio
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      restart: unless-stopped
+    networks:
+      - negozio-net
+
+  app-negozio:
+    image: marcoscale98/taass:negozio
+    container_name: microservizio_negozio
+    volumes:
+      - negozio-data:/var/lib/negozio
+    ports:
+      - "8082:8080"
+    depends_on:
+      - dbpostgresql-negozio
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql-negozio:5435/negozio
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - negozio-net
+      - microservizi-net
+    labels:
+      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+
+  ######################### pgadmin #########################
+  pgadmin:
+    container_name: pgadmin4_container_master
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_LISTEN_PORT: 50
+    ports:
+      - "5050:50"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    links:
+      - "dbpostgresql-negozio:pgsql-server"
+      - "dbpostgresql-utente:pgsql-server"
+      - "dbpostgresql-ospedale:pgsql-server"
+    depends_on:
+      - dbpostgresql-negozio
+      - dbpostgresql-utente
+      - dbpostgresql-ospedale
+    logging:
+      driver: none
+
+  ######################### frontend - web #########################
+  frontend-web:
+    container_name: frontend_web
+    image: marcoscale98/taass:frontend
+    ports:
+      - "4200:80"
+    volumes:
+      - frontend-data:/var/lib/frontend
+    depends_on:
+      - app-negozio
+      - app-utente
+      - app-ospedale
+      - api-gateway
+    networks:
+      - frontend-apigateway-net
+    labels:
+      kompose.service.type: NodePort
+
+  ######################## api-gateway ###################
+  api-gateway:
+    container_name: api-gateway
+    image: marcoscale98/taass:apigateway
+    ports:
+      - "8079:8079"
+    depends_on:
+      - app-negozio
+      - app-utente
+      - app-ospedale
+    networks:
+      - microservizi-net
+      - frontend-apigateway-net
+    environment:
+      SERVER_PORT: 8079
+      SPRING_CLOUD_GATEWAY_ROUTES_0__ID: app_utente
+      SPRING_CLOUD_GATEWAY_ROUTES_0__URI: http://host.docker.internal:8080/
+      SPRING_CLOUD_GATEWAY_ROUTES_0__PREDICATES_0_: Path=/utente/**,/storia/**
+      SPRING_CLOUD_GATEWAY_ROUTES_1__ID: app_ospedale
+      SPRING_CLOUD_GATEWAY_ROUTES_1__URI: http://host.docker.internal:8081/
+      SPRING_CLOUD_GATEWAY_ROUTES_1__PREDICATES_0_: Path=/ospedale/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2__ID: app_negozio
+      SPRING_CLOUD_GATEWAY_ROUTES_2__URI: http://host.docker.internal:8082/
+      SPRING_CLOUD_GATEWAY_ROUTES_2__PREDICATES_0_: Path=/carrelli/**,/indirizzi/**,/ordini/**,/prodotti/**
+      SPRING_CLOUD_GATEWAY_ROUTES_2__FILTERS_0_: PrefixPath=/api/v1
+    labels:
+      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+
+######################### volumi #########################
+volumes:
+  dbpostgresql-negozio-data:
+  negozio-data:
+  dbpostgresql-utente-data:
+  utente-data:
+  dbpostgresql-ospedale-data:
+  ospedale-data:
+  pgadmin-data:
+  rabbitmq-data:
+  frontend-data:
+
+######################### networks #########################
+networks:
+  negozio-net:
+  utente-net:
+  ospedale-net:
+  microservizi-net:
+  frontend-apigateway-net:

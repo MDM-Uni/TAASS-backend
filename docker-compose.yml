@@ -151,7 +151,7 @@ services:
       - app_utente
       - app_ospedale
 
- ######################## api-gateway ###################
+  ######################## api-gateway ###################
   api-gateway:
     container_name: api-gateway
     build: api-gateway
