@@ -159,52 +159,6 @@ services:
     logging:
       driver: none
 
-  ######################### frontend - web #########################
-  frontend-web:
-    container_name: frontend_web
-    image: marcoscale98/taass:frontend
-    ports:
-      - "4200:80"
-    volumes:
-      - frontend-data:/var/lib/frontend
-    depends_on:
-      - app-negozio
-      - app-utente
-      - app-ospedale
-      - api-gateway
-    networks:
-      - frontend-apigateway-net
-    labels:
-      kompose.service.type: NodePort
-
-  ######################## api-gateway ###################
-  api-gateway:
-    container_name: api-gateway
-    image: marcoscale98/taass:apigateway
-    ports:
-      - "8079:8079"
-    depends_on:
-      - app-negozio
-      - app-utente
-      - app-ospedale
-    networks:
-      - microservizi-net
-      - frontend-apigateway-net
-    environment:
-      SERVER_PORT: 8079
-      SPRING_CLOUD_GATEWAY_ROUTES_0__ID: app_utente
-      SPRING_CLOUD_GATEWAY_ROUTES_0__URI: http://host.docker.internal:8080/
-      SPRING_CLOUD_GATEWAY_ROUTES_0__PREDICATES_0_: Path=/utente/**,/storia/**
-      SPRING_CLOUD_GATEWAY_ROUTES_1__ID: app_ospedale
-      SPRING_CLOUD_GATEWAY_ROUTES_1__URI: http://host.docker.internal:8081/
-      SPRING_CLOUD_GATEWAY_ROUTES_1__PREDICATES_0_: Path=/ospedale/**
-      SPRING_CLOUD_GATEWAY_ROUTES_2__ID: app_negozio
-      SPRING_CLOUD_GATEWAY_ROUTES_2__URI: http://host.docker.internal:8082/
-      SPRING_CLOUD_GATEWAY_ROUTES_2__PREDICATES_0_: Path=/carrelli/**,/indirizzi/**,/ordini/**,/prodotti/**
-      SPRING_CLOUD_GATEWAY_ROUTES_2__FILTERS_0_: PrefixPath=/api/v1
-    labels:
-      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
-
 ######################### volumi #########################
 volumes:
   dbpostgresql-negozio-data:
@@ -223,4 +177,3 @@ networks:
   utente-net:
   ospedale-net:
   microservizi-net:
-  frontend-apigateway-net:
