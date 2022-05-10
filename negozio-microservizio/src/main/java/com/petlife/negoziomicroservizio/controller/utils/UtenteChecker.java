@@ -40,7 +40,7 @@ public class UtenteChecker {
 
         ResponseEntity<Boolean> response = WebClient.builder().build()
                 .get()
-                .uri("http://host.docker.internal:8080/user/{id}",id)
+                .uri("http://host.docker.internal:8079/utente/user/{id}",id)
                 .headers(httpHeaders -> {
                     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
                 })
