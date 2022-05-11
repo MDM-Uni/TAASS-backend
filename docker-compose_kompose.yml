@@ -118,7 +118,7 @@ services:
       - negozio-net
 
   app-negozio:
-    image: marcoscale98/taass:negozio
+    image: marcoscale98/taass:negozio-no-apigateway
     container_name: microservizio_negozio
     volumes:
       - negozio-data:/var/lib/negozio
@@ -161,6 +161,24 @@ services:
       - dbpostgresql-ospedale
     logging:
       driver: none
+
+#  ######################### frontend - web #########################
+#  frontend-web:
+#    container_name: frontend_web
+#    image: marcoscale98/taass:frontend-no-apigateway
+#    ports:
+#      - "4200:80"
+#    volumes:
+#      - frontend-data:/var/lib/frontend
+#    depends_on:
+#      - app_negozio
+#      - app_utente
+#      - app_ospedale
+#    networks:
+#      - microservizi-net
+#    labels:
+#      kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+#      kompose.image-pull-policy: Always
 
 ######################### volumi #########################
 volumes:

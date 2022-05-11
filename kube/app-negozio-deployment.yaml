@@ -40,7 +40,7 @@ spec:
               value: admin
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
-          image: marcoscale98/taass:negozio
+          image: marcoscale98/taass:negozio-no-apigateway
           imagePullPolicy: Always
           name: microservizio-negozio
           ports:
