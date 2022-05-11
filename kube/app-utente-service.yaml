@@ -3,6 +3,7 @@ kind: Service
 metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.image-pull-policy: Always
     kompose.service.type: NodePort
     kompose.version: 1.26.1 (HEAD)
   creationTimestamp: null

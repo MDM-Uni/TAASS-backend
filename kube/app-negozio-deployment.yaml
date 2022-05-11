@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.image-pull-policy: Always
     kompose.service.type: NodePort
     kompose.version: 1.26.1 (HEAD)
   creationTimestamp: null
@@ -20,6 +21,7 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.image-pull-policy: Always
         kompose.service.type: NodePort
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
@@ -39,6 +41,7 @@ spec:
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
           image: marcoscale98/taass:negozio
+          imagePullPolicy: Always
           name: microservizio-negozio
           ports:
             - containerPort: 8080

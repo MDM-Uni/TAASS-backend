@@ -55,6 +55,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+      kompose.image-pull-policy: Always
 
 
   ######################### ospedale #########################
@@ -98,6 +99,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+      kompose.image-pull-policy: Always
 
   ######################### negozio #########################
   dbpostgresql-negozio:
@@ -134,6 +136,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
+      kompose.image-pull-policy: Always
 
   ######################### pgadmin #########################
   pgadmin:

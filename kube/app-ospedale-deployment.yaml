@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+    kompose.image-pull-policy: Always
     kompose.service.type: NodePort
     kompose.version: 1.26.1 (HEAD)
   creationTimestamp: null
@@ -20,6 +21,7 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
+        kompose.image-pull-policy: Always
         kompose.service.type: NodePort
         kompose.version: 1.26.1 (HEAD)
       creationTimestamp: null
@@ -47,6 +49,7 @@ spec:
             - name: SPRING_RABBITMQ_USERNAME
               value: guest
           image: marcoscale98/taass:ospedale
+          imagePullPolicy: Always
           name: microservizio-ospedale
           ports:
             - containerPort: 8080
