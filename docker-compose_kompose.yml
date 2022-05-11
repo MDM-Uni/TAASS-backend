@@ -31,8 +31,9 @@ services:
       - utente-net
 
   app-utente:
-    image: marcoscale98/taass:utente
+    image: utente
     container_name: microservizio_utente
+    build: utente-microservizio
     volumes:
       - utente-data:/var/lib/utente
     ports:
@@ -55,7 +56,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
-      kompose.image-pull-policy: Always
+      kompose.image-pull-policy: Never
 
 
   ######################### ospedale #########################
@@ -75,8 +76,9 @@ services:
       - ospedale-net
 
   app-ospedale:
-    image: marcoscale98/taass:ospedale
+    image: ospedale
     container_name: microservizio_ospedale
+    build: ospedale-microservizio
     volumes:
       - ospedale-data:/var/lib/ospedale
     ports:
@@ -99,7 +101,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
-      kompose.image-pull-policy: Always
+      kompose.image-pull-policy: Never
 
   ######################### negozio #########################
   dbpostgresql-negozio:
@@ -118,7 +120,8 @@ services:
       - negozio-net
 
   app-negozio:
-    image: marcoscale98/taass:negozio-no-apigateway
+    image: negozio
+    build: negozio-microservizio
     container_name: microservizio_negozio
     volumes:
       - negozio-data:/var/lib/negozio
@@ -136,7 +139,7 @@ services:
       - microservizi-net
     labels:
       kompose.service.type: NodePort # in produzione useremo 'ClusterIP' per evitare il contatto diretto con l'esterno
-      kompose.image-pull-policy: Always
+      kompose.image-pull-policy: Never
 
   ######################### pgadmin #########################
   pgadmin:

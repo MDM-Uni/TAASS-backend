@@ -2,10 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
-    kompose.image-pull-policy: Always
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe -f docker-compose_kompose.yml convert --out kube
+    kompose.image-pull-policy: Never
     kompose.service.type: NodePort
-    kompose.version: 1.26.1 (HEAD)
+    kompose.version: 1.26.0 (40646f47)
   creationTimestamp: null
   labels:
     io.kompose.service: app-negozio
@@ -20,10 +20,10 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose -f docker-compose_kompose.yml convert --out kube
-        kompose.image-pull-policy: Always
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe -f docker-compose_kompose.yml convert --out kube
+        kompose.image-pull-policy: Never
         kompose.service.type: NodePort
-        kompose.version: 1.26.1 (HEAD)
+        kompose.version: 1.26.0 (40646f47)
       creationTimestamp: null
       labels:
         io.kompose.network/microservizi-net: "true"
@@ -40,8 +40,8 @@ spec:
               value: admin
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
-          image: marcoscale98/taass:negozio-no-apigateway
-          imagePullPolicy: Always
+          image: negozio
+          imagePullPolicy: Never
           name: microservizio-negozio
           ports:
             - containerPort: 8080
